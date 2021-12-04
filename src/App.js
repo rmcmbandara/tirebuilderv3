@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { HashRouter, Route, Switch } from 'react-router-dom'
+
+import { incrementCountAction } from '../src/actions'
 import './scss/style.scss'
 
 const loading = (
@@ -40,4 +43,11 @@ class App extends Component {
   }
 }
 
-export default App
+const mapStateToProps = (state) => ({
+  myCount: state.count,
+})
+
+const mapDispatchToProps = {
+  incrementMyCount: incrementCountAction,
+}
+export default connect(mapStateToProps)(App)
