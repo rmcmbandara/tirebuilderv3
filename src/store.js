@@ -1,6 +1,7 @@
 import { createStore } from 'redux'
 const initialState = {
   sidebarShow: false,
+  count: 0,
 }
 const changeState = (state = initialState, { type, ...rest }) => {
   switch (type) {
