@@ -6,14 +6,8 @@ import { CNavItem } from '@coreui/react'
 const _navx = [
   {
     component: CNavItem,
-    name: 'PID Update',
-    to: '/pidupdate',
-    icon: <CIcon icon={cilLibraryAdd} customClassName="nav-icon" />,
-  },
-  {
-    component: CNavItem,
-    name: 'SpecUpdate',
-    to: '/specupdate',
+    name: 'Tire Builder',
+    to: '/tirebuilder',
     icon: <CIcon icon={cilBarcode} customClassName="nav-icon" />,
   },
 ]
