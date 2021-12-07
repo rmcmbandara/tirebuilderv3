@@ -5,25 +5,28 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../../src/apis/SLTLDBConnection'
 import { notifyError } from 'src/utils/toastify'
 import { getPidDetail } from '../pidUpdate/httpRequests/pidDetailforPid'
-import { connect } from 'react-redux'
+
+import { connect, useDispatch, useSelector } from 'react-redux'
+import { setStability, setStabilityAbsolute } from '../../redux/scalStability/stabilityActions'
+import { toggleSideBarShow } from '../../redux/sideBarShow/sideBarShowActions'
 
 import { incrementCountAction } from '../../actions'
 import { propTypes } from 'react-bootstrap/esm/Image'
-const SpecUpdate = ({ myCount, incrementMyCount }) => {
-  return (
-    <div className="App">
-      <button onClick={incrementMyCount}>{myCount}</button>
-    </div>
-  )
+
+//Reduc
+
+const SpecUpdate = () => {
+  //Destructre stability Detail
+
+  const stabilityDetail = useSelector((state) => state.stabilityDetails)
+  const blnSideBarShow = useSelector((state) => state.sidebarShow)
+  const { settingWgt, stability, toleranceWgt, ignoreSettingWgt } = stabilityDetail
+  const dispatch = useDispatch()
+
+  const clickHandler = () => {
+    dispatch(toggleSideBarShow(!blnSideBarShow))
+  }
+  return <div className="App"></div>
 }
 
-const mapStateToProps = (state) => ({ myCount: state.count })
-
-const mapDispatchToProps = {
-  incrementMyCount: incrementCountAction,
-}
-SpecUpdate.propTypes = {
-  myCount: PropTypes.number,
-  incrementMyCount: PropTypes.func,
-}
-export default connect(mapStateToProps, mapDispatchToProps)(SpecUpdate)
+export default SpecUpdate
