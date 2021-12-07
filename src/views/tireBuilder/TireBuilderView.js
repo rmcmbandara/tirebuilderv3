@@ -9,8 +9,13 @@ import { connect } from 'react-redux'
 
 import { incrementCountAction } from '../../actions'
 import { propTypes } from 'react-bootstrap/esm/Image'
+import TireCodeInputComp from 'src/components/tireCodeTxtInput/TireCodeInputComp'
 const TireBuilderView = () => {
-  return <div>TireBuilder</div>
+  return (
+    <div>
+      <TireCodeInputComp />
+    </div>
+  )
 }
 
 export default TireBuilderView
