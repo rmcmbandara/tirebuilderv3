@@ -5,6 +5,7 @@ import { sideBarShowReducer } from './redux/sideBarShow/sideBarShowReducers'
 import { tireCodeTextReducer } from './redux/tireCodeText/tireCodeTextReducer'
 import { tireCodeDetailReducer } from './redux/tireCodeDetail/tireCodeDetailsReducer'
 import { specReducer } from './redux/spec/specReducer'
+import { dataAvlReducer } from './redux/dataAvl/dataAvlReducers'
 const initialState = {}
 const reducer = combineReducers({
   stabilityDetails: stabilityReducer,
@@ -12,6 +13,7 @@ const reducer = combineReducers({
   tireCodeText: tireCodeTextReducer,
   tireCodeDetails: tireCodeDetailReducer,
   specDetails: specReducer,
+  dataAvlReducer: dataAvlReducer,
 })
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(reducer, initialState, composeEnhancer(applyMiddleware(thunk)))
