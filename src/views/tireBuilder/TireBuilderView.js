@@ -46,9 +46,6 @@ const TireBuilderView = () => {
       >
         Forcus
       </Button>
-      <div> Tire Code {JSON.stringify(tireCodeAvl)}</div>
-      <div> Spec {JSON.stringify(specAvl)}</div>
-      <div> Spec Ver {JSON.stringify(specVerMatch)}</div>
     </div>
   )
 }
