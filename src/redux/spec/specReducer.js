@@ -23,6 +23,7 @@ const specReducer = (state = { specDetail: {} }, action) => {
         loading: false,
         data: {},
       }
+
     default:
       return state
   }

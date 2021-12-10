@@ -30,7 +30,12 @@ const notifyWarning = (msg) => {
     autoClose: 3000,
   })
 }
-
+const notifyErrorQk = (msg) => {
+  toast.error(msg, {
+    position: toast.POSITION.TOP_LEFT,
+    autoClose: 1000,
+  })
+}
 const notifyWarningQk = (msg) => {
   toast.warning(msg, {
     position: toast.POSITION.TOP_LEFT,
@@ -45,5 +50,13 @@ const notifyInfo = (msg) => {
   })
 }
 
-export { notifyInfo, notifyWarning, notifyError, notifySuccess, notifySuccessQk, notifyWarningQk }
+export {
+  notifyErrorQk,
+  notifyInfo,
+  notifyWarning,
+  notifyError,
+  notifySuccess,
+  notifySuccessQk,
+  notifyWarningQk,
+}
 // ------------------------------------------------------------------------

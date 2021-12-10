@@ -9,9 +9,16 @@ import { connect } from 'react-redux'
 
 import { incrementCountAction } from '../../actions'
 import { propTypes } from 'react-bootstrap/esm/Image'
-import TireCodeInputComp from 'src/components/tireCodeTxtInput/TireCodeInputComp'
+import TireCodeInputComp from 'src/components/bilder/TireCodeInputComp'
 const TireBuilderView = () => {
+  //States and Refs-----------------------------
+  //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
+  const [specAvl, setSpecAvl] = useState(false)
+  const [tireCodeAvl, setTireCodeAvl] = useState(false)
+  const [specVerMatch, setSpecVerMatch] = useState(false)
   const inputRef = useRef()
+
+  //Handlers and Methods-------------------------
   const clickHander = () => {
     inputRef?.current.focus()
   }
@@ -20,7 +27,18 @@ const TireBuilderView = () => {
   }, [])
   return (
     <div>
-      <TireCodeInputComp inputRef={inputRef} />
+      <TireCodeInputComp
+        inputRef={inputRef}
+        specAvlChangeHandler={(val) => {
+          setSpecAvl(val)
+        }}
+        tireCodeAvlChangeHandler={(val) => {
+          setTireCodeAvl(val)
+        }}
+        specVerMachHandler={(val) => {
+          setSpecVerMatch(val)
+        }}
+      />
       <Button
         onClick={() => {
           clickHander()
@@ -28,6 +46,9 @@ const TireBuilderView = () => {
       >
         Forcus
       </Button>
+      <div> Tire Code {JSON.stringify(tireCodeAvl)}</div>
+      <div> Spec {JSON.stringify(specAvl)}</div>
+      <div> Spec Ver {JSON.stringify(specVerMatch)}</div>
     </div>
   )
 }
