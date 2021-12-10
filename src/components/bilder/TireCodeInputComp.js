@@ -6,17 +6,17 @@ import { notifyError, notifyErrorQk, notifyWarningQk } from 'src/utils/toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { tireCodeTextChange } from '../../redux/tireCodeText/tireCodeTextActions'
 import {
+  updateTireCodeAvl,
+  updateSpecAvl,
+  updateSpecVerMach,
+} from '../../redux/dataAvl/dataAvlActions'
+import {
   setTireCodeDetail,
   resetTireDetails,
 } from '../../redux/tireCodeDetail/tireCodeDetailsActions'
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 
-const TireCodeInputComp = ({
-  inputRef,
-  specAvlChangeHandler,
-  tireCodeAvlChangeHandler,
-  specVerMachHandler,
-}) => {
+const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
   //States-------------------------------------------------------------------
   const [tireCodeInput, setTireCodeInput] = useState('1175411')
   const [showed, setshowed] = useState(false)
@@ -53,7 +53,7 @@ const TireCodeInputComp = ({
       tireCodeTxt?.data?.length === 8 //Tire Code Equal to 8 no interger
     ) {
       //No tireCode
-      tireCodeAvlChangeHandler(false) //Send tireCodeAvl Detail to Perent
+      dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
       return notifyWarningQk('Tire Code එකක් නොමැත')
     }
     //TireCode is available
@@ -64,7 +64,7 @@ const TireCodeInputComp = ({
         ttid: tireCodeDetail?.data?.data?.data[0]?.tiretypeid,
       }
       dispatch(getSpecDetail(params))
-      tireCodeAvlChangeHandler(true) //Send tireCodeAvl Detail to Perent
+      dispatch(updateTireCodeAvl(true)) //Send tireCodeAvl Detail to Perent
     }
   }, [tireCodeDetail])
 
@@ -76,7 +76,7 @@ const TireCodeInputComp = ({
       dispatch(setTireCodeDetail('000')) //Big not possible Number
       dispatch(resetSpec()) //Reset the spec
       setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
-      tireCodeAvlChangeHandler(false) //Send tireCodeAvl Detail to Perent
+      dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
     }
   }, [tireCodeTxt])
 
@@ -103,7 +103,7 @@ const TireCodeInputComp = ({
 
     //specVersion Matching and Spec Availability send to the peraent
     if (specDetail?.data?.data) {
-      specAvlChangeHandler(true) //Send SpecAvl info to perent base on Spec Avilability
+      dispatch(updateSpecAvl(true)) //Send SpecAvl info to perent base on Spec Avilability
 
       //Get the spec Version of the tireCode
       var specVerInput = tireCodeInput.substr(tireCodeInput.length - 3)
@@ -111,13 +111,13 @@ const TireCodeInputComp = ({
 
       //Send specVerMach info to perent base on Spec Avilability
       if (specVerInput === specVerDB) {
-        specVerMachHandler(true)
+        dispatch(updateSpecVerMach(true))
       } else {
-        specVerMachHandler(false)
+        dispatch(updateSpecVerMach(false))
       }
     } else {
-      specAvlChangeHandler(false) //Send SpecAvl info to perent base on Spec Avilability
-      specVerMachHandler(false) //Send specVerMach info to perent base on Spec Avilability
+      dispatch(updateSpecAvl(false)) //Send SpecAvl info to perent base on Spec Avilability
+      dispatch(updateSpecVerMach(false)) //Send specVerMach info to perent base on Spec Avilability
     }
   }, [specDetail])
 

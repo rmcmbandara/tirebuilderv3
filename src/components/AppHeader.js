@@ -17,19 +17,33 @@ import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import { logo } from 'src/assets/brand/logo'
-//Redux
+//Redux action import -----------------
+//--Actions
 import { toggleSideBarShow } from '../redux/sideBarShow/sideBarShowActions'
+
+//Compoenents import---------------
+import TireDetailDesplayComp from './TireDetailDesplayComp'
+
+//Functions----------------------------
 
 const AppHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const dataAvl = useSelector((state) => state.dataAvlReducer)
   return (
     <CHeader position="sticky" className="mb-1">
       <CContainer fluid>
         <CHeaderToggler className="ps-1" onClick={() => dispatch(toggleSideBarShow(!sidebarShow))}>
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        TireDetails
+        {dataAvl.tcAvl ? (
+          <>
+            <TireDetailDesplayComp />
+          </>
+        ) : (
+          <></>
+        )}
+        <div></div>
       </CContainer>
       <CHeaderDivider />
     </CHeader>
