@@ -41,7 +41,7 @@ const SpecDisplayComp = () => {
           <Badge bg="success">Compound</Badge>
         </h3>
       </div>
-      <Col sm={6}>
+      <Col>
         <Table striped bordered hover responsive="sm">
           <thead>
             <tr>
@@ -69,14 +69,8 @@ const SpecDisplayComp = () => {
           <Badge bg="warning">Band</Badge>
         </h3>
       </div>
-      <Col sm={6}>
+      <Col>
         <Table striped bordered hover responsive="sm">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Wgt</th>
-            </tr>
-          </thead>
           <tbody>
             <tr>
               <td>{band}</td>

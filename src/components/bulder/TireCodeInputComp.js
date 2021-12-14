@@ -123,7 +123,7 @@ const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
 
   return (
     <div>
-      <Col xs={4}>
+      <Col xs={8}>
         <Form.Control
           ref={inputRef}
           size="lg"

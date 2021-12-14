@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { useState, useEffect, useRef } from 'react'
-import { Button, Col, Dropdown, DropdownButton, Form, Row, Stack } from 'react-bootstrap'
+import { Badge, Button, Col, Dropdown, DropdownButton, Form, Row, Stack } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../../src/apis/SLTLDBConnection'
 import { notifyError } from 'src/utils/toastify'
@@ -9,9 +9,10 @@ import { connect } from 'react-redux'
 
 import { incrementCountAction } from '../../actions'
 import { propTypes } from 'react-bootstrap/esm/Image'
-import TireCodeInputComp from 'src/components/bilder/TireCodeInputComp'
+import TireCodeInputComp from 'src/components/bulder/TireCodeInputComp'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
-import SpecDisplayComp from 'src/components/bilder/SpecDisplayComp'
+import SpecDisplayComp from 'src/components/bulder/SpecDisplayComp'
+import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -27,24 +28,42 @@ const TireBuilderView = () => {
   useEffect(() => {
     inputRef?.current.focus()
   }, [])
+
+  //Get next SN
+  const [nxtSN, setNxtSN] = useState(0)
+
+  useEffect(() => {
+    //Initialize
+    const timer = setInterval(async () => {
+      SLTLDBConnection.get(`builder/nextsn`).then((res) => {
+        setNxtSN(res.data)
+        console.log(res.data)
+      })
+    }, 500)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
   return (
-    <div>
-      <TireCodeInputComp
-        inputRef={inputRef}
-        specAvlChangeHandler={(val) => {
-          setSpecAvl(val)
-        }}
-        tireCodeAvlChangeHandler={(val) => {
-          setTireCodeAvl(val)
-        }}
-        specVerMachHandler={(val) => {
-          setSpecVerMatch(val)
-        }}
-      />
-      <div style={{ marginTop: '50px', marginRight: 0 }}>
-        <SpecDisplayComp />
-      </div>
-    </div>
+    <Row>
+      <Col sm={3}>
+        <div style={{ marginTop: '50px', marginRight: 0 }}>
+          <SpecDisplayComp />
+        </div>
+        <TireCodeInputComp inputRef={inputRef} />
+      </Col>
+      <Col sm={3}></Col>
+      <Col sm={3}>
+        <div style={{ marginTop: '50px', marginRight: 0 }}>
+          <TtlWgtDisplayComp />
+        </div>
+        <div className="col text-center mt-5">
+          <h1>
+            <Badge bg="secondary">{nxtSN}</Badge>
+          </h1>
+        </div>
+      </Col>
+    </Row>
   )
 }
 

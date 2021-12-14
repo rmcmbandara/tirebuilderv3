@@ -16,18 +16,16 @@ const TireDetailDesplayComp = () => {
   const moldno = tireCodeDetail?.data?.data?.data[0]?.moldno
   return (
     <Row>
-      <Col lg={10}>
-        <Card border="warning">
-          <Card.Title style={{ fontSize: '25px', color: 'blue' }}>
+      <Col lg={11}>
+        <Card border="warning p-1 m-0">
+          <p style={{ fontSize: '30px', color: 'blue' }}>
             {tiresizebasic} {lugtypecap} {config} {rimsize} {tiretypecap} {brand} {swmsg}
-          </Card.Title>
+          </p>
           <Card.Title>{config == 'APW' ? `Wheel Color- ${color}` : ''}</Card.Title>{' '}
         </Card>
       </Col>
-      <Col lg={2}>
-        <Card border="warning">
-          <Card.Title style={{ color: 'blue' }}>Mold:-{moldno}</Card.Title>
-        </Card>
+      <Col sm={1}>
+        <p style={{ color: 'blue' }}>M No-{moldno}</p>
       </Col>
     </Row>
   )
