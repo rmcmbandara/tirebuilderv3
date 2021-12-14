@@ -23,6 +23,7 @@ import { toggleSideBarShow } from '../redux/sideBarShow/sideBarShowActions'
 
 //Compoenents import---------------
 import TireDetailDesplayComp from './TireDetailDesplayComp'
+import WgtDisplay from './ScaleWgtDisplay'
 
 //Functions----------------------------
 
@@ -36,14 +37,8 @@ const AppHeader = () => {
         <CHeaderToggler className="ps-1" onClick={() => dispatch(toggleSideBarShow(!sidebarShow))}>
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
-        {dataAvl.tcAvl ? (
-          <>
-            <TireDetailDesplayComp />
-          </>
-        ) : (
-          <></>
-        )}
-        <div></div>
+        {dataAvl.tcAvl ? <TireDetailDesplayComp /> : <></>}
+        <WgtDisplay />
       </CContainer>
       <CHeaderDivider />
     </CHeader>
