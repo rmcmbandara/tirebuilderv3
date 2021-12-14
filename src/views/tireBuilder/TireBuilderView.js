@@ -10,6 +10,8 @@ import { connect } from 'react-redux'
 import { incrementCountAction } from '../../actions'
 import { propTypes } from 'react-bootstrap/esm/Image'
 import TireCodeInputComp from 'src/components/bilder/TireCodeInputComp'
+import { getSpecDetailsList } from 'src/utils/specDetailCreator'
+import SpecDisplayComp from 'src/components/bilder/SpecDisplayComp'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -39,13 +41,9 @@ const TireBuilderView = () => {
           setSpecVerMatch(val)
         }}
       />
-      <Button
-        onClick={() => {
-          clickHander()
-        }}
-      >
-        Forcus
-      </Button>
+      <div style={{ marginTop: '50px', marginRight: 0 }}>
+        <SpecDisplayComp />
+      </div>
     </div>
   )
 }
