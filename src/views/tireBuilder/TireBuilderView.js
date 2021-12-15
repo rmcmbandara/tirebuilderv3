@@ -13,24 +13,30 @@ import TireCodeInputComp from 'src/components/bulder/TireCodeInputComp'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import SpecDisplayComp from 'src/components/bulder/SpecDisplayComp'
 import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
+//Redux---------------------------------
+import { useDispatch, useSelector } from 'react-redux'
+import { updateSN } from '../../redux/builderFinalData/buildFinalActions'
+
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
   const [specAvl, setSpecAvl] = useState(false)
   const [tireCodeAvl, setTireCodeAvl] = useState(false)
   const [specVerMatch, setSpecVerMatch] = useState(false)
+  //Get next SN
+  const [nxtSN, setNxtSN] = useState(0)
+
   const inputRef = useRef()
 
   //Handlers and Methods-------------------------
   const clickHander = () => {
     inputRef?.current.focus()
   }
+
+  //UseEffects-------------------------
   useEffect(() => {
     inputRef?.current.focus()
   }, [])
-
-  //Get next SN
-  const [nxtSN, setNxtSN] = useState(0)
 
   useEffect(() => {
     //Initialize
