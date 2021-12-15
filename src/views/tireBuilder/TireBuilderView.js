@@ -16,7 +16,7 @@ import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
 //Redux---------------------------------
 import { useDispatch, useSelector } from 'react-redux'
 import { updateSN } from '../../redux/builderFinalData/buildFinalActions'
-
+import { scaleReading } from '../../redux/scale/scaleActions'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -43,9 +43,24 @@ const TireBuilderView = () => {
     const timer = setInterval(async () => {
       SLTLDBConnection.get(`builder/nextsn`).then((res) => {
         setNxtSN(res.data)
-        console.log(res.data)
       })
     }, 500)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+  //Scale Reading -------------------
+  const scale = useSelector((state) => state.scaleData)
+  const dispatch = useDispatch()
+  var { reading } = scale
+  //Fetch from localhost:4000/sc  and store in redux store with timer
+  useEffect(() => {
+    //Initialize
+    const sto = { reading: 0, time: Date.now() }
+    localStorage.setItem('cr', JSON.stringify(sto))
+    const timer = setInterval(async () => {
+      dispatch(scaleReading())
+    }, 200)
     return () => {
       clearInterval(timer)
     }
