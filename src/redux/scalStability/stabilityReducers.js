@@ -8,8 +8,8 @@ import {
 
 const stabilityReducer = (
   state = {
-    stability: false,
-    stabilityAbsolute: false,
+    stable: false,
+    stableAbsolute: false,
     settingWgt: 0.055,
     toleranceWgt: 0.04,
     ignoreSettingWgt: false,
@@ -18,7 +18,7 @@ const stabilityReducer = (
 ) => {
   switch (action.type) {
     case SET_STABILITY:
-      return { ...state, stability: action.payload }
+      return { ...state, stable: action.payload }
 
     case SET_STABILITY_SETTING_WGT:
       return { ...state, settingWgt: action.payload }
@@ -30,7 +30,7 @@ const stabilityReducer = (
       return { ...state, ignoreSettingWgt: action.payload }
 
     case SET_STABILITY_ABSOLUTE:
-      return { ...state, stabilityAbsolute: action.payload }
+      return { ...state, stableAbsolute: action.payload }
 
     default:
       return state
@@ -38,3 +38,13 @@ const stabilityReducer = (
 }
 
 export { stabilityReducer }
+
+/*
+  state = {
+    stability: false,
+    stabilityAbsolute: false,
+    settingWgt: 0.055,
+    toleranceWgt: 0.04,
+    ignoreSettingWgt: false,
+  },
+*/

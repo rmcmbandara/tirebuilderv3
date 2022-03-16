@@ -39,9 +39,11 @@ const TtlWgtDisplayComp = () => {
   }, [lst])
 
   //Click Handler
-
+  const [mvavArr, setMvavArr] = useState([])
+  const [count, setCount] = useState(0)
   const clickHandler = () => {
-    console.log('clciked')
+    setMvavArr(...mvavArr, 'fuck')
+    console.log(mvavArr)
   }
 
   return (

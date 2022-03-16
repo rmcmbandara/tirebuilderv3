@@ -18,7 +18,7 @@ import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 
 const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
   //States-------------------------------------------------------------------
-  const [tireCodeInput, setTireCodeInput] = useState('1465033')
+  const [tireCodeInput, setTireCodeInput] = useState('1491223') //------------***********************
   const [showed, setshowed] = useState(false)
 
   //Redux---------------------------------------------------------------------
