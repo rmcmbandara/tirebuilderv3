@@ -17,6 +17,8 @@ import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateSN } from '../../redux/builderFinalData/buildFinalActions'
 import { scaleReading } from '../../redux/scale/scaleActions'
+import StabilitySetterComp from 'src/components/StabilitySetterComp'
+import { rng } from 'src/utils/moveingaverage'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -65,6 +67,31 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
+  ///////////////////////////////
+  var mvavArr = []
+
+  //States----------------------------
+  const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
+  const [scaleReadingx, setScaleReadingx] = useState(0)
+
+  //Redux-------------------------------------
+  const tireDetail = useSelector((state) => state.tireDetails)
+  const specDetail = useSelector((state) => state.specDetails)
+  const stabilityDetail = useSelector((state) => state.stabilityDetails)
+
+  //Destructre stability Detail
+  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt } = stabilityDetail
+
+  useEffect(() => {
+    if (scale.reading !== undefined) {
+      setScaleReadingx(scale?.reading?.reading?.wgtReading)
+      //-------------------------------
+      //Time series calculation for IH
+    }
+    //******Important********    DELETE
+    //  {Key:cr ,value:cr	{"reading":" 3.06","time":1606103572272}}
+  }, [scale])
+  /////////////////////////////////////////////////////////////
   return (
     <Row>
       <Col sm={3}>
@@ -84,6 +111,7 @@ const TireBuilderView = () => {
           </h1>
         </div>
       </Col>
+      <StabilitySetterComp />
     </Row>
   )
 }
