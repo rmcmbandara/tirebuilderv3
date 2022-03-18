@@ -4,7 +4,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { rng } from 'src/utils/moveingaverage'
 
 import { setStabilityAbsolute, setStability } from '../redux/scalStability/stabilityActions'
+
+//import constats for stability
+
+import { MOVING_AVERAGE_LENGTH } from '../utils/constants'
+
 var mvavArr = []
+const { TIMEX } = process.env
 const WgtDisplay = () => {
   //States--------------------------------------------
   const [scaleReading, setScaleReading] = useState(0)
@@ -15,6 +21,7 @@ const WgtDisplay = () => {
   const { settingWgt, stable, toleranceWgt, ignoreSettingWgt } = stabilityDetail //Destructre stability Detail
   const dispatch = useDispatch()
 
+  //UseEffect for scale reading detection
   useEffect(() => {
     if (scale?.reading?.reading) {
       setScaleReading(scale?.reading?.reading?.wgtReading)
@@ -82,7 +89,8 @@ const WgtDisplay = () => {
     <Card>
       <Card.Body>
         <div className="col text-center">
-          <p style={{ fontSize: '50px' }}>{scaleReading && scaleReading}</p>
+          <p style={{ fontSize: '65px' }}>{scaleReading && scaleReading}</p>
+          {MOVING_AVERAGE_LENGTH}
         </div>
       </Card.Body>
     </Card>
