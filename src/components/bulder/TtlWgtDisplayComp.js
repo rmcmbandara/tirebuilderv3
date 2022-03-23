@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import SLTLDBConnection from 'src/apis/SLTLDBConnection'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
-
+import { setSettingWgt } from '../../redux/scalStability/stabilityActions'
 const TtlWgtDisplayComp = () => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -14,29 +14,39 @@ const TtlWgtDisplayComp = () => {
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
   const tireCodeTxt = useSelector((state) => state.tireCodeText)
+
+  const dispatch = useDispatch()
   //Get the Band Details
   const bandwgt = tireCodeDetail?.data?.data?.data[0]?.bandwgt
 
   //Variable Decalrations
-  const [lst, setLst] = useState([]) //Compound Detail List
+  const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
 
   const specAvl = dataAvl?.specAvl
   //SpecDetail useEffect
   //Check for spec Availability and if avl get the comp and wgts as an array
   useEffect(() => {
-    setLst(getSpecDetailsList())
+    setWgtLst(getSpecDetailsList())
   }, [specDetail])
 
-  //usee Effect for lst change
+  //usee Effect for wgtLst change
   //Calculate total Wgt
   useEffect(() => {
-    if (lst?.length > 0 && lst) {
+    if (wgtLst?.length > 0 && wgtLst) {
       const sumall =
-        lst && lst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
+        wgtLst && wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
       const x = parseFloat(bandwgt) + sumall
       setTtlWgt(x)
     }
-  }, [lst])
+    console.log(wgtLst && wgtLst)
+  }, [wgtLst])
+
+  //set setting Weight in stability redux
+  useEffect(() => {
+    if (ttlWgt && ttlWgt > 0) {
+      dispatch(setSettingWgt(ttlWgt))
+    }
+  }, [ttlWgt])
 
   //Click Handler
   const [mvavArr, setMvavArr] = useState([])

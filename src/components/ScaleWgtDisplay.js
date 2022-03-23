@@ -7,7 +7,12 @@ import { setStabilityAbsolute, setStability } from '../redux/scalStability/stabi
 
 //import constats for stability
 
-import { MOVING_AVERAGE_LENGTH } from '../utils/constants'
+import {
+  MOVING_AVERAGE_ARRAY_LENGTH,
+  IFFERENCE_SMALL_TIRES,
+  DIFFERENCE_LARGE_TIRES,
+  DIFFERENCE_MIDIAM_TIRES,
+} from '../utils/constants'
 
 var mvavArr = []
 const { TIMEX } = process.env
@@ -28,59 +33,23 @@ const WgtDisplay = () => {
       //-------------------------------
       //Time series calculation for IH
       //NO of elemets is 5
-      if (mvavArr.length === 5) {
+      if (mvavArr.length === parseInt(MOVING_AVERAGE_ARRAY_LENGTH)) {
         mvavArr.shift()
       }
-      if (mvavArr.length < 5) {
+      if (mvavArr.length < parseInt(MOVING_AVERAGE_ARRAY_LENGTH)) {
         mvavArr.push(Number(scaleReading))
       }
+
+      //Get Moving Average
       const mvav = rng(4, 4, mvavArr)
+      //Difference between scale reading and moving average
       const diff = Math.abs(scaleReading - mvav)
 
       //Absolute Stability
-      if (diff < 0.03) {
+      if (diff < 0.05) {
         dispatch(setStabilityAbsolute(true))
       } else {
         dispatch(setStabilityAbsolute(false))
-      }
-      //setting Wgt
-      if (!ignoreSettingWgt) {
-        var lr = {}
-
-        const sto = { reading: scaleReading, time: Date.now() }
-        try {
-          lr = JSON.parse(localStorage.getItem('cr'))
-        } catch (err) {
-          localStorage.setItem('cr', JSON.stringify(sto))
-          console.log(err)
-        }
-        var inRange = false
-        if (lr.reading !== scaleReading) {
-          if (
-            scaleReading - settingWgt > -toleranceWgt &&
-            scaleReading - settingWgt < toleranceWgt
-          ) {
-            //With in range
-            //Do nothing
-            inRange = true
-            //  console.log('in Range');+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-          } else {
-            //Out of range
-            inRange = false
-            dispatch(setStability(false))
-            localStorage.setItem('cr', JSON.stringify(sto))
-            //    console.log('Out Range');
-          }
-        }
-        if (Date.now() - lr.time > stblTimeOutSetting) {
-          //Waiting Time paseded. OK
-          if (inRange) {
-            dispatch(setStability(true))
-          }
-        } else {
-          //Waiting Time
-          dispatch(setStability(false))
-        }
       }
     }
   }, [scale])
@@ -90,10 +59,49 @@ const WgtDisplay = () => {
       <Card.Body>
         <div className="col text-center">
           <p style={{ fontSize: '65px' }}>{scaleReading && scaleReading}</p>
-          {MOVING_AVERAGE_LENGTH}
         </div>
       </Card.Body>
     </Card>
   )
 }
 export default WgtDisplay
+
+/*
+
+ //setting Wgt
+      var lr = {}
+      //sto-Current time and scale reading
+      const sto = { reading: scaleReading, time: Date.now() }
+      //Store current time
+      try {
+        lr = JSON.parse(localStorage.getItem('cr')) //Get lr(last stored lr)
+      } catch (err) {
+        localStorage.setItem('cr', JSON.stringify(sto))
+        console.log(err)
+      }
+      var inRange = false
+      if (lr.reading !== scaleReading) {
+        if (scaleReading - settingWgt > -toleranceWgt && scaleReading - settingWgt < toleranceWgt) {
+          //With in range
+          //Do nothing
+          inRange = true
+          //  console.log('in Range');+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        } else {
+          //Out of range
+          inRange = false
+          dispatch(setStability(false))
+          localStorage.setItem('cr', JSON.stringify(sto))
+          //    console.log('Out Range');
+        }
+      }
+      if (Date.now() - lr.time > stblTimeOutSetting) {
+        //Waiting Time paseded. OK
+        if (inRange) {
+          dispatch(setStability(true))
+        }
+      } else {
+        //Waiting Time
+        dispatch(setStability(false))
+      }
+
+*/
