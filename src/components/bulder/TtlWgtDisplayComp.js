@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import SLTLDBConnection from 'src/apis/SLTLDBConnection'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import { setSettingWgt } from '../../redux/scalStability/stabilityActions'
+import { getTtlWgtTol } from '../../utils/finalWgtTolleranceCreator'
 const TtlWgtDisplayComp = () => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -13,8 +14,7 @@ const TtlWgtDisplayComp = () => {
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
-  const tireCodeTxt = useSelector((state) => state.tireCodeText)
-
+  const { settingWgt } = useSelector((state) => state.stabilityDetails)
   const dispatch = useDispatch()
   //Get the Band Details
   const bandwgt = tireCodeDetail?.data?.data?.data[0]?.bandwgt
@@ -38,7 +38,6 @@ const TtlWgtDisplayComp = () => {
       const x = parseFloat(bandwgt) + sumall
       setTtlWgt(x)
     }
-    console.log(wgtLst && wgtLst)
   }, [wgtLst])
 
   //set setting Weight in stability redux
@@ -53,8 +52,9 @@ const TtlWgtDisplayComp = () => {
   const [mvavArr, setMvavArr] = useState([])
   const [count, setCount] = useState(0)
   const clickHandler = () => {
-    setMvavArr(...mvavArr, 'fuck')
-    console.log(mvavArr)
+    const [minValue, maxValue] = getTtlWgtTol(101)
+    console.log('min Val ' + minValue)
+    console.log('max val ' + maxValue)
   }
 
   return (
@@ -62,7 +62,7 @@ const TtlWgtDisplayComp = () => {
       <Card.Header as="h5">Total Wgt</Card.Header>
       <Card.Body>
         <div className="col text-center">
-          <Card.Title style={{ fontSize: '50px' }}>{ttlWgt.toFixed(2)}</Card.Title>
+          <Card.Title style={{ fontSize: '50px' }}>{settingWgt.toFixed(2)}</Card.Title>
         </div>
         <div className="col text-center mt-5">
           <Button
