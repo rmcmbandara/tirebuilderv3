@@ -15,10 +15,10 @@ import {
   resetTireDetails,
 } from '../../redux/tireCodeDetail/tireCodeDetailsActions'
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
-
+import { setSettingWgt } from '../../redux/scalStability/stabilityActions'
 const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
   //States-------------------------------------------------------------------
-  const [tireCodeInput, setTireCodeInput] = useState('1491223') //------------***********************
+  const [tireCodeInput, setTireCodeInput] = useState('1177511') //------------***********************
   const [showed, setshowed] = useState(false)
 
   //Redux---------------------------------------------------------------------
@@ -77,6 +77,7 @@ const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
       dispatch(resetSpec()) //Reset the spec
       setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
+      dispatch(setSettingWgt(0)) //Set scale stability setting weing to 0
     }
   }, [tireCodeTxt])
 

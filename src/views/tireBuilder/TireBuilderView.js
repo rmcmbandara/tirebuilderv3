@@ -19,6 +19,7 @@ import { updateSN } from '../../redux/builderFinalData/buildFinalActions'
 import { scaleReading } from '../../redux/scale/scaleActions'
 import StabilitySetterComp from 'src/components/StabilitySetterComp'
 import { rng } from 'src/utils/moveingaverage'
+import { BubbleController } from 'chart.js'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -61,6 +62,7 @@ const TireBuilderView = () => {
     const sto = { reading: 0, time: Date.now() }
     localStorage.setItem('cr', JSON.stringify(sto))
     const timer = setInterval(async () => {
+      //codes are executed every 200ms
       dispatch(scaleReading())
     }, 200)
     return () => {
@@ -80,7 +82,7 @@ const TireBuilderView = () => {
   const stabilityDetail = useSelector((state) => state.stabilityDetails)
 
   //Destructre stability Detail
-  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt } = stabilityDetail
+  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
 
   useEffect(() => {
     if (scale.reading !== undefined) {
@@ -93,7 +95,11 @@ const TireBuilderView = () => {
   }, [scale])
   /////////////////////////////////////////////////////////////
   return (
-    <Row>
+    <Row
+      style={{
+        backgroundColor: !stableAbsolute && 'lightgray',
+      }}
+    >
       <Col sm={3}>
         <div style={{ marginTop: '50px', marginRight: 0 }}>
           <SpecDisplayComp />

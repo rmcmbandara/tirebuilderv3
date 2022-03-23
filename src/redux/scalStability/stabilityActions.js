@@ -10,6 +10,8 @@ const setStability = (value) => (dispatch) => {
   dispatch({ type: SET_STABILITY, payload: value })
 }
 
+//set in TtlWgtDisplayComp.js
+//Cleard in TireCodeInputComp.js
 const setSettingWgt = (value) => (dispatch) => {
   dispatch({ type: SET_STABILITY_SETTING_WGT, payload: value })
 }

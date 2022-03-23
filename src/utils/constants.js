@@ -1,1 +1,4 @@
-export const MOVING_AVERAGE_LENGTH = 2
+export const MOVING_AVERAGE_ARRAY_LENGTH = 5
+export const DIFFERENCE_SMALL_TIRES = 5
+export const DIFFERENCE_MIDIAM_TIRES = 5
+export const DIFFERENCE_LARGE_TIRES = 5
