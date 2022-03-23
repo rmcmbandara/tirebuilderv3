@@ -43,6 +43,7 @@ const TtlWgtDisplayComp = () => {
 
   //set setting Weight in stability redux
   useEffect(() => {
+    //Set the setting weight for total weight
     if (ttlWgt && ttlWgt > 0) {
       dispatch(setSettingWgt(ttlWgt))
     }
