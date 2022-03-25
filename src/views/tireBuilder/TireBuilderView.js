@@ -20,21 +20,21 @@ import { scaleReading } from '../../redux/scale/scaleActions'
 import StabilitySetterComp from 'src/components/StabilitySetterComp'
 import { rng } from 'src/utils/moveingaverage'
 import { BubbleController } from 'chart.js'
+import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
   const [specAvl, setSpecAvl] = useState(false)
   const [tireCodeAvl, setTireCodeAvl] = useState(false)
   const [specVerMatch, setSpecVerMatch] = useState(false)
+  const [showBandInput, setShowBandInput] = useState(false)
   //Get next SN
   const [nxtSN, setNxtSN] = useState(0)
 
   const inputRef = useRef()
+  const bandRef = useRef()
 
   //Handlers and Methods-------------------------
-  const clickHander = () => {
-    inputRef?.current.focus()
-  }
 
   //UseEffects-------------------------
   useEffect(() => {
@@ -105,10 +105,12 @@ const TireBuilderView = () => {
           <SpecDisplayComp />
         </div>
         <TireCodeInputComp inputRef={inputRef} />
+        <div className="m-3"></div>
+        {showBandInput && <BandWgtScanComp bandRef={bandRef} />}
       </Col>
       <Col sm={3}></Col>
       <Col sm={3}>
-        <div style={{ marginTop: '50px', marginRight: 0 }}>
+        <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
           <TtlWgtDisplayComp />
         </div>
         <div className="col text-center mt-5">

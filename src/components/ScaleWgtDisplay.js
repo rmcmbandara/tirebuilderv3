@@ -3,7 +3,12 @@ import { Button, Card } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { rng } from 'src/utils/moveingaverage'
 
-import { setStabilityAbsolute, setStability } from '../redux/scalStability/stabilityActions'
+import {
+  setStabilityAbsolute,
+  setStability,
+  setMovingAvg,
+  setMovingAvg2,
+} from '../redux/scalStability/stabilityActions'
 
 //import constats for stability
 
@@ -23,7 +28,7 @@ const WgtDisplay = () => {
   //Redux-------------------------------------------
   const scale = useSelector((state) => state.scaleData)
   const stabilityDetail = useSelector((state) => state.stabilityDetails)
-  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt } = stabilityDetail //Destructre stability Detail
+  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, movingAverage } = stabilityDetail //Destructre stability Detail
   const dispatch = useDispatch()
 
   //UseEffect for scale reading detection
@@ -41,8 +46,9 @@ const WgtDisplay = () => {
       }
 
       //Get Moving Average
-      const mvav = rng(4, 4, mvavArr)
+      const mvav = rng(3, 3, mvavArr)
       //Difference between scale reading and moving average
+      dispatch(setMovingAvg(mvav))
       const diff = Math.abs(scaleReading - mvav)
 
       //Absolute Stability
@@ -59,6 +65,7 @@ const WgtDisplay = () => {
       <Card.Body>
         <div className="col text-center">
           <p style={{ fontSize: '65px' }}>{scaleReading && scaleReading}</p>
+          <p style={{ fontSize: '65px' }}>{movingAverage && movingAverage.toFixed(2)}</p>
         </div>
       </Card.Body>
     </Card>

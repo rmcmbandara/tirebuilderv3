@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card } from 'react-bootstrap'
+import { Button, Card, Nav } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import SLTLDBConnection from 'src/apis/SLTLDBConnection'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import { setSettingWgt } from '../../redux/scalStability/stabilityActions'
 import { getTtlWgtTol } from '../../utils/finalWgtTolleranceCreator'
+import { setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
 const TtlWgtDisplayComp = () => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -14,7 +15,7 @@ const TtlWgtDisplayComp = () => {
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
-  const { settingWgt } = useSelector((state) => state.stabilityDetails)
+  const { settingWgt, maxTol, minTol } = useSelector((state) => state.stabilityDetails)
   const dispatch = useDispatch()
   //Get the Band Details
   const bandwgt = tireCodeDetail?.data?.data?.data[0]?.bandwgt
@@ -44,7 +45,12 @@ const TtlWgtDisplayComp = () => {
   useEffect(() => {
     //Set the setting weight for total weight
     if (ttlWgt && ttlWgt > 0) {
+      //Get SettingWgt for SRT Tires----For POBs need band wgt adjestment
       dispatch(setSettingWgt(ttlWgt))
+      const [minValue, maxValue] = getTtlWgtTol(parseFloat(ttlWgt))
+      console.log('TtlWgt Display Comp Max Val' + maxValue)
+      dispatch(setMaxTol(maxValue))
+      dispatch(setMinTol(minValue))
     }
   }, [ttlWgt])
 
@@ -58,7 +64,45 @@ const TtlWgtDisplayComp = () => {
   }
 
   return (
-    <Card style={{ minWidth: '400px' }}>
+    <Card style={{ minWidth: '500px' }}>
+      <Card.Header>
+        <Nav variant="pills" defaultActiveKey="#first">
+          <Nav.Item>
+            <Nav.Link disabled style={{ fontSize: '35px' }}>
+              {minTol.toFixed(2)}
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link style={{ fontSize: '60px' }}>{settingWgt.toFixed(2)}</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link disabled style={{ fontSize: '35px' }}>
+              {maxTol.toFixed(2)}
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+      </Card.Header>
+      <Card.Body>
+        <div className="col text-center mt-5">
+          <Button
+            className="btn btn-default fs-1 mx-auto "
+            style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
+            onClick={clickHandler}
+          >
+            ENTER
+          </Button>
+        </div>
+      </Card.Body>
+    </Card>
+  )
+}
+
+export default TtlWgtDisplayComp
+
+/*
+
+
+   <Card style={{ minWidth: '400px' }}>
       <Card.Header as="h5">Total Wgt</Card.Header>
       <Card.Body>
         <div className="col text-center">
@@ -75,7 +119,4 @@ const TtlWgtDisplayComp = () => {
         </div>
       </Card.Body>
     </Card>
-  )
-}
-
-export default TtlWgtDisplayComp
+*/
