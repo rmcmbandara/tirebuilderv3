@@ -4,6 +4,9 @@ import {
   SET_STABILITY_TOLERANCE,
   SET_INGORE_SETTING_WGT,
   SET_STABILITY_ABSOLUTE,
+  SET_MOVING_AVERAGE,
+  SET_MAX_TOL,
+  SET_MIN_TOL,
 } from './stabilityConstants'
 
 const setStability = (value) => (dispatch) => {
@@ -27,5 +30,27 @@ const setIgnoreSettingWgt = (value) => (dispatch) => {
 const setStabilityAbsolute = (value) => (dispatch) => {
   dispatch({ type: SET_STABILITY_ABSOLUTE, payload: value })
 }
-
-export { setStability, setSettingWgt, setToleranceWgt, setIgnoreSettingWgt, setStabilityAbsolute }
+//set in ScaleWgtDisplay
+const setMovingAvg = (value) => (dispatch) => {
+  dispatch({ type: SET_MOVING_AVERAGE, payload: value })
+}
+//set in TtlWgtDisplayComp.js
+//Cleard in TireCodeInputComp.js
+const setMaxTol = (value) => (dispatch) => {
+  dispatch({ type: SET_MAX_TOL, payload: value })
+}
+//set in TtlWgtDisplayComp.js
+//Cleard in TireCodeInputComp.js
+const setMinTol = (value) => (dispatch) => {
+  dispatch({ type: SET_MIN_TOL, payload: value })
+}
+export {
+  setMovingAvg,
+  setStability,
+  setSettingWgt,
+  setToleranceWgt,
+  setIgnoreSettingWgt,
+  setStabilityAbsolute,
+  setMaxTol,
+  setMinTol,
+}
