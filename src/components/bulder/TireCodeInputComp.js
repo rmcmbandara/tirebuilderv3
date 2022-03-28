@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Col, Container, Form, Row } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { notifyError, notifyErrorQk, notifyWarningQk } from 'src/utils/toastify'
@@ -10,15 +10,11 @@ import {
   updateSpecAvl,
   updateSpecVerMach,
 } from '../../redux/dataAvl/dataAvlActions'
-import {
-  setTireCodeDetail,
-  resetTireDetails,
-} from '../../redux/tireCodeDetail/tireCodeDetailsActions'
+import { setTireCodeDetail } from '../../redux/tireCodeDetail/tireCodeDetailsActions'
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 import { setSettingWgt, setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
-const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
+const TireCodeInputComp = ({ inputRef, tireCodeInput, onTireCodeChange }) => {
   //States-------------------------------------------------------------------
-  const [tireCodeInput, setTireCodeInput] = useState('1177511') //------------***********************
   const [showed, setshowed] = useState(false)
 
   //Redux---------------------------------------------------------------------
@@ -29,13 +25,14 @@ const TireCodeInputComp = ({ inputRef, specVerMachHandler }) => {
   const specDetail = useSelector((state) => state.specDetails)
   //Functions----------------------------------------------------------------
   //TireCode input change handler
-  const inputChangeHandler = (e) => {
+  const inputChangeHandler = useCallback((e) => {
     //replace non-digits with blank
     const value = e.target.value.replace(/[^\d]/, '')
-    if (parseInt(value) !== 0) {
-      setTireCodeInput(value)
+    if (onTireCodeChange(value) !== 0) {
+      // setTireCodeInputFun(value)
     }
-  }
+  })
+
   //UseEffects-------------------------------------------------------------
 
   //--UseEffect for tirecode text change dispatch the input
@@ -147,6 +144,7 @@ TireCodeInputComp.propTypes = {
   inputRef: PropTypes.object,
   specAvlChangeHandler: PropTypes.func,
   tireCodeAvlChangeHandler: PropTypes.func,
-  specVerMachHandler: PropTypes.func,
+  tireCodeInput: PropTypes.number,
+  onTireCodeChange: PropTypes.func,
 }
 export default TireCodeInputComp

@@ -1,7 +1,13 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Col, Form } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-const BandWgtScanComp = ({ bandRef }) => {
+const BandWgtScanComp = ({ bandRef, onBandBarcodeChange, bandBarCodeInput }) => {
+  const handleInputChange = useCallback(
+    (event) => {
+      onBandBarcodeChange(event.target.value)
+    },
+    [onBandBarcodeChange],
+  )
   return (
     <>
       <Col xs={8}>
@@ -10,9 +16,9 @@ const BandWgtScanComp = ({ bandRef }) => {
           size="lg"
           type="text"
           pattern="[0-9]*"
-          placeholder="Tire Code..."
-          value="lankasdf;lksaf;"
-          maxLength="8"
+          placeholder="scan band stiker"
+          onChange={handleInputChange}
+          value={bandBarCodeInput}
         />
       </Col>
     </>
@@ -21,6 +27,9 @@ const BandWgtScanComp = ({ bandRef }) => {
 
 BandWgtScanComp.propTypes = {
   bandRef: PropTypes.object,
+  specAvlChangeHandler: PropTypes.func,
+  bandBarCodeInput: PropTypes.number,
+  onBandBarcodeChange: PropTypes.func,
 }
 
 export default BandWgtScanComp
