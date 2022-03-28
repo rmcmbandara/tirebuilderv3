@@ -27,7 +27,16 @@ const TireBuilderView = () => {
   const [specAvl, setSpecAvl] = useState(false)
   const [tireCodeAvl, setTireCodeAvl] = useState(false)
   const [specVerMatch, setSpecVerMatch] = useState(false)
-  const [showBandInput, setShowBandInput] = useState(false)
+  const [showBandInputComp, setShowBandInputComp] = useState(false)
+  const [showTtlWgtComp, setShowTtlWgtComp] = useState(false)
+
+  const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
+  const [scaleReadingx, setScaleReadingx] = useState(0)
+
+  const [tireCodeInput, setTireCodeInput] = useState('1177511') //TireCode input text state
+  const [bandBarCodeInput, setBandBarCodeInput] = useState('') //TireCode input text state
+  const [name, setName] = useState('foo')
+  const [tcat, setTcat] = useState()
   //Get next SN
   const [nxtSN, setNxtSN] = useState(0)
 
@@ -35,6 +44,14 @@ const TireBuilderView = () => {
   const bandRef = useRef()
 
   //Handlers and Methods-------------------------
+  const setTirecodeInputFun = (val) => {
+    setTireCodeInput(val)
+  }
+  const setBandBarCodeInputFun = (val) => {
+    setBandBarCodeInput(val)
+  }
+  //Handle band input show
+  useEffect(() => {}, [tireCodeInput])
 
   //UseEffects-------------------------
   useEffect(() => {
@@ -47,7 +64,7 @@ const TireBuilderView = () => {
       SLTLDBConnection.get(`builder/nextsn`).then((res) => {
         setNxtSN(res.data)
       })
-    }, 500)
+    }, 1000)
     return () => {
       clearInterval(timer)
     }
@@ -69,12 +86,41 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
+
+  //UseEffect to show or hide band barcode input text
+  /*
+  When tirecode length is 8
+  if srt tire show totoal wgt
+  if band tire 
+  first show band scan text. if it is scanned show total wgt  */
+  useEffect(() => {
+    if (tireCodeInput.length == 8) {
+      SLTLDBConnection.get(`sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`).then(
+        (res) => {
+          if (res.data) {
+            switch (res.data.rows[0].tcat) {
+              case 1:
+                setShowTtlWgtComp(true)
+                setShowBandInputComp(false)
+                return
+              case 2:
+                setShowTtlWgtComp(false)
+                setShowBandInputComp(true)
+                bandRef?.current.focus()
+                return
+              default:
+                setShowTtlWgtComp(false)
+                setShowBandInputComp(false)
+                return
+            }
+          }
+        },
+      )
+    }
+  }, [tireCodeInput])
+
   ///////////////////////////////
   var mvavArr = []
-
-  //States----------------------------
-  const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
-  const [scaleReadingx, setScaleReadingx] = useState(0)
 
   //Redux-------------------------------------
   const tireDetail = useSelector((state) => state.tireDetails)
@@ -104,15 +150,29 @@ const TireBuilderView = () => {
         <div style={{ marginTop: '50px', marginRight: 0 }}>
           <SpecDisplayComp />
         </div>
-        <TireCodeInputComp inputRef={inputRef} />
+        <TireCodeInputComp
+          inputRef={inputRef}
+          tireCodeInput={tireCodeInput}
+          onTireCodeChange={setTirecodeInputFun}
+        />
         <div className="m-3"></div>
-        {showBandInput && <BandWgtScanComp bandRef={bandRef} />}
+        {showBandInputComp && (
+          <BandWgtScanComp
+            bandRef={bandRef}
+            bandBarCodeInput={bandBarCodeInput}
+            onBandBarcodeChange={setBandBarCodeInputFun}
+            name={bandBarCodeInput}
+            onNameChange={setBandBarCodeInput}
+          />
+        )}
       </Col>
       <Col sm={3}></Col>
       <Col sm={3}>
-        <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-          <TtlWgtDisplayComp />
-        </div>
+        {showTtlWgtComp && (
+          <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
+            <TtlWgtDisplayComp />
+          </div>
+        )}
         <div className="col text-center mt-5">
           <h1>
             <Badge bg="secondary">{nxtSN}</Badge>

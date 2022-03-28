@@ -48,7 +48,6 @@ const TtlWgtDisplayComp = () => {
       //Get SettingWgt for SRT Tires----For POBs need band wgt adjestment
       dispatch(setSettingWgt(ttlWgt))
       const [minValue, maxValue] = getTtlWgtTol(parseFloat(ttlWgt))
-      console.log('TtlWgt Display Comp Max Val' + maxValue)
       dispatch(setMaxTol(maxValue))
       dispatch(setMinTol(minValue))
     }
@@ -59,8 +58,6 @@ const TtlWgtDisplayComp = () => {
   const [count, setCount] = useState(0)
   const clickHandler = () => {
     const [minValue, maxValue] = getTtlWgtTol(101)
-    console.log('min Val ' + minValue)
-    console.log('max val ' + maxValue)
   }
 
   return (
