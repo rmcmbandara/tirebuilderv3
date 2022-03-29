@@ -34,9 +34,9 @@ const TtlWgtDisplayComp = () => {
   //Calculate total Wgt
   useEffect(() => {
     if (wgtLst?.length > 0 && wgtLst) {
-      const sumall =
+      const sum_all =
         wgtLst && wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
-      const x = parseFloat(bandwgt) + sumall
+      const x = parseFloat(bandwgt) + sum_all
       setTtlWgt(x)
     }
   }, [wgtLst])

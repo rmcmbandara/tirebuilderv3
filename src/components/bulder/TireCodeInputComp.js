@@ -13,7 +13,7 @@ import {
 import { setTireCodeDetail } from '../../redux/tireCodeDetail/tireCodeDetailsActions'
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 import { setSettingWgt, setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
-const TireCodeInputComp = ({ inputRef, tireCodeInput, onTireCodeChange }) => {
+const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTireCodeChange }) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
 
@@ -133,6 +133,7 @@ const TireCodeInputComp = ({ inputRef, tireCodeInput, onTireCodeChange }) => {
           onChange={(e) => inputChangeHandler(e)}
           value={tireCodeInput}
           maxLength="8"
+          disabled={disableInputTireCode}
         />
       </Col>
     </>
@@ -146,5 +147,6 @@ TireCodeInputComp.propTypes = {
   tireCodeAvlChangeHandler: PropTypes.func,
   tireCodeInput: PropTypes.number,
   onTireCodeChange: PropTypes.func,
+  disableInputTireCode: PropTypes.bool,
 }
 export default TireCodeInputComp

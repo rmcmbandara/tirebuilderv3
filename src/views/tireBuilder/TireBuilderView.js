@@ -21,28 +21,49 @@ import StabilitySetterComp from 'src/components/StabilitySetterComp'
 import { rng } from 'src/utils/moveingaverage'
 import { BubbleController } from 'chart.js'
 import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
+import { isNumeric } from 'src/utils/isNumeric'
+import { getBandWgtTol } from 'src/utils/bandWgtTol'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
   const [specAvl, setSpecAvl] = useState(false)
   const [tireCodeAvl, setTireCodeAvl] = useState(false)
   const [specVerMatch, setSpecVerMatch] = useState(false)
-  const [showBandInputComp, setShowBandInputComp] = useState(false)
-  const [showTtlWgtComp, setShowTtlWgtComp] = useState(false)
-
-  const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
   const [scaleReadingx, setScaleReadingx] = useState(0)
 
+  //Inputs for tireCode and BandBarcode
   const [tireCodeInput, setTireCodeInput] = useState('1177511') //TireCode input text state
   const [bandBarCodeInput, setBandBarCodeInput] = useState('') //TireCode input text state
-  const [name, setName] = useState('foo')
-  const [tcat, setTcat] = useState()
+
+  //Band wgt tollerence max and min
+  const [minBandTol, setMinBandTol] = useState(0)
+  const [maxBandTol, setMaxBandTol] = useState(0)
+
   //Get next SN
   const [nxtSN, setNxtSN] = useState(0)
 
+  //Show and hide tirecode input and band input
+  const [showBandInputComp, setShowBandInputComp] = useState(false)
+  const [showTtlWgtComp, setShowTtlWgtComp] = useState(false)
+  //Disable editing tirecode input and band input
+  const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
+  const [disableInputTireCode, setDisableInputTireCode] = useState(false)
+  //Refs for TireCode and BandBarcode
   const inputRef = useRef()
   const bandRef = useRef()
+  ///////////////////////////////
 
+  //Redux-------------------------------------
+
+  const dispatch = useDispatch()
+  const tireDetail = useSelector((state) => state.tireDetails)
+  const specDetail = useSelector((state) => state.specDetails)
+  const stabilityDetail = useSelector((state) => state.stabilityDetails)
+  const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
+  //Destructre stability Detail
+  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
+
+  /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
   const setTirecodeInputFun = (val) => {
     setTireCodeInput(val)
@@ -50,14 +71,13 @@ const TireBuilderView = () => {
   const setBandBarCodeInputFun = (val) => {
     setBandBarCodeInput(val)
   }
-  //Handle band input show
-  useEffect(() => {}, [tireCodeInput])
-
   //UseEffects-------------------------
+  //Focus input ref whenever page is loaded and refreshed
   useEffect(() => {
     inputRef?.current.focus()
   }, [])
 
+  //Timer for get Next SN(Already added next sn )
   useEffect(() => {
     //Initialize
     const timer = setInterval(async () => {
@@ -69,9 +89,41 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
-  //Scale Reading -------------------
+
+  //Band Input
+  useEffect(() => {
+    if (bandBarCodeInput.length > 0) {
+      //Get the first and last letters
+      let firstLetter = bandBarCodeInput.charAt(0)
+      let lastLetter = bandBarCodeInput.charAt(bandBarCodeInput.length - 1)
+      //chck for S and L first and last charactors
+      if ((firstLetter == 's' || firstLetter == 'S') && (lastLetter == 'l' || lastLetter == 'L')) {
+        //Get Band Detail
+        const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
+        //Get enterd band wgt
+        const bandWgtInput = bandBarCodeInput.slice(1, -1)
+        const bandWgtConve = parseFloat(bandWgtInput)
+        const maxTolVal = getBandWgtTol(bandwgtSpec) + parseFloat(bandwgtSpec)
+        const minTolVal = parseFloat(bandwgtSpec) - getBandWgtTol(bandwgtSpec)
+
+        if (minTolVal > bandWgtConve) {
+          notifyError('අඩු බර බෑන්ඩ් එකක්')
+          setBandBarCodeInput('')
+          bandRef.current.focus()
+        } else if (maxTolVal < bandWgtConve) {
+          notifyError('වැඩි බර බෑන්ඩ් එකක්')
+          setBandBarCodeInput('')
+          bandRef.current.focus()
+        } else {
+          //Band in correct range
+          //Calculate the total wgt accordingly and show total wgt
+        }
+      }
+    }
+  }, [bandBarCodeInput])
+
+  //Scale Reading------------------------------------------------------------------
   const scale = useSelector((state) => state.scaleData)
-  const dispatch = useDispatch()
   var { reading } = scale
   //Fetch from localhost:4000/sc  and store in redux store with timer
   useEffect(() => {
@@ -86,7 +138,7 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
-
+  //------------------------------------------------------------------
   //UseEffect to show or hide band barcode input text
   /*
   When tirecode length is 8
@@ -97,11 +149,12 @@ const TireBuilderView = () => {
     if (tireCodeInput.length == 8) {
       SLTLDBConnection.get(`sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`).then(
         (res) => {
-          if (res.data) {
+          if (res.data && res.data.rows[0]) {
             switch (res.data.rows[0].tcat) {
               case 1:
                 setShowTtlWgtComp(true)
                 setShowBandInputComp(false)
+                setDisableInputTireCode(true)
                 return
               case 2:
                 setShowTtlWgtComp(false)
@@ -118,28 +171,13 @@ const TireBuilderView = () => {
       )
     }
   }, [tireCodeInput])
-
-  ///////////////////////////////
-  var mvavArr = []
-
-  //Redux-------------------------------------
-  const tireDetail = useSelector((state) => state.tireDetails)
-  const specDetail = useSelector((state) => state.specDetails)
-  const stabilityDetail = useSelector((state) => state.stabilityDetails)
-
-  //Destructre stability Detail
-  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
-
+  //Get the band wgt min and max tollerences
   useEffect(() => {
-    if (scale.reading !== undefined) {
-      setScaleReadingx(scale?.reading?.reading?.wgtReading)
-      //-------------------------------
-      //Time series calculation for IH
+    if (tireCodeDetail) {
+      const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
     }
-    //******Important********    DELETE
-    //  {Key:cr ,value:cr	{"reading":" 3.06","time":1606103572272}}
-  }, [scale])
-  /////////////////////////////////////////////////////////////
+  }, [tireCodeDetail])
+
   return (
     <Row
       style={{
@@ -163,6 +201,7 @@ const TireBuilderView = () => {
             onBandBarcodeChange={setBandBarCodeInputFun}
             name={bandBarCodeInput}
             onNameChange={setBandBarCodeInput}
+            disableInputTireCode={disableInputTireCode}
           />
         )}
       </Col>
