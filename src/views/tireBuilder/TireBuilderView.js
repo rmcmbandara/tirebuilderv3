@@ -111,7 +111,6 @@ const TireBuilderView = () => {
           setBandwgt_for_calculation(bandWgt_numeric)
           const maxTolVal = getBandWgtTol(bandwgtSpec) + parseFloat(bandwgtSpec)
           const minTolVal = parseFloat(bandwgtSpec) - getBandWgtTol(bandwgtSpec)
-          console.log('Numeric')
           if (minTolVal > bandWgt_numeric) {
             //Reset band barcode input and band wgt for calculation
             setBandwgt_for_calculation(0)

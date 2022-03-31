@@ -35,11 +35,12 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   //Calculate total Wgt
   useEffect(() => {
     if (wgtLst?.length > 0 && wgtLst) {
+      //Get the last element of the compound and adjust the weight if tire is pob tire.
+
       const sum_all =
         wgtLst && wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
       const x = parseFloat(bandwgt_for_calculation) + sum_all
       setTtlWgt(x)
-      console.log(bandwgt_for_calculation)
     }
   }, [wgtLst, bandwgt_for_calculation])
 
