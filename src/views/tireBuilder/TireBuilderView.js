@@ -38,7 +38,8 @@ const TireBuilderView = () => {
   //Band wgt tollerence max and min
   const [minBandTol, setMinBandTol] = useState(0)
   const [maxBandTol, setMaxBandTol] = useState(0)
-
+  //Actual band weight to pass to ttlWgt Calculation componeint
+  const [bandwgt_for_calculation, setBandwgt_for_calculation] = useState(0)
   //Get next SN
   const [nxtSN, setNxtSN] = useState(0)
 
@@ -48,6 +49,7 @@ const TireBuilderView = () => {
   //Disable editing tirecode input and band input
   const [stblTimeOutSetting, setStblTimeOutSetting] = useState(1000)
   const [disableInputTireCode, setDisableInputTireCode] = useState(false)
+  const [disableInputBand, setDisableInputBand] = useState(false)
   //Refs for TireCode and BandBarcode
   const inputRef = useRef()
   const bandRef = useRef()
@@ -65,9 +67,11 @@ const TireBuilderView = () => {
 
   /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
+  //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
     setTireCodeInput(val)
   }
+  //This is passed to BandBarcodeInput.js
   const setBandBarCodeInputFun = (val) => {
     setBandBarCodeInput(val)
   }
@@ -102,26 +106,34 @@ const TireBuilderView = () => {
         const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
         //Get enterd band wgt
         const bandWgtInput = bandBarCodeInput.slice(1, -1)
-        const bandWgtConve = parseFloat(bandWgtInput)
-        const maxTolVal = getBandWgtTol(bandwgtSpec) + parseFloat(bandwgtSpec)
-        const minTolVal = parseFloat(bandwgtSpec) - getBandWgtTol(bandwgtSpec)
-
-        if (minTolVal > bandWgtConve) {
-          notifyError('අඩු බර බෑන්ඩ් එකක්')
-          setBandBarCodeInput('')
-          bandRef.current.focus()
-        } else if (maxTolVal < bandWgtConve) {
-          notifyError('වැඩි බර බෑන්ඩ් එකක්')
-          setBandBarCodeInput('')
-          bandRef.current.focus()
-        } else {
-          //Band in correct range
-          //Calculate the total wgt accordingly and show total wgt
+        const bandWgt_numeric = parseFloat(bandWgtInput)
+        if (bandWgt_numeric) {
+          setBandwgt_for_calculation(bandWgt_numeric)
+          const maxTolVal = getBandWgtTol(bandwgtSpec) + parseFloat(bandwgtSpec)
+          const minTolVal = parseFloat(bandwgtSpec) - getBandWgtTol(bandwgtSpec)
+          if (minTolVal > bandWgt_numeric) {
+            //Reset band barcode input and band wgt for calculation
+            setBandwgt_for_calculation(0)
+            notifyError('අඩු බර බෑන්ඩ් එකක්')
+            setBandBarCodeInput('')
+            bandRef.current.focus()
+          } else if (maxTolVal < bandWgt_numeric) {
+            notifyError('වැඩි බර බෑන්ඩ් එකක්')
+            //Reset band barcode input and band wgt for calculation
+            setBandwgt_for_calculation(0)
+            setBandBarCodeInput('')
+            bandRef.current.focus()
+          } else {
+            //Band Wgt is in the range therfore Show totla wgt component
+            setShowTtlWgtComp(true)
+            setDisableInputTireCode(true)
+          }
         }
+      } else {
+        setShowTtlWgtComp(false) //Hide ttlWgt componeint
       }
     }
   }, [bandBarCodeInput])
-
   //Scale Reading------------------------------------------------------------------
   const scale = useSelector((state) => state.scaleData)
   var { reading } = scale
@@ -192,6 +204,7 @@ const TireBuilderView = () => {
           inputRef={inputRef}
           tireCodeInput={tireCodeInput}
           onTireCodeChange={setTirecodeInputFun}
+          disableInputTireCode={disableInputTireCode}
         />
         <div className="m-3"></div>
         {showBandInputComp && (
@@ -201,7 +214,7 @@ const TireBuilderView = () => {
             onBandBarcodeChange={setBandBarCodeInputFun}
             name={bandBarCodeInput}
             onNameChange={setBandBarCodeInput}
-            disableInputTireCode={disableInputTireCode}
+            disableInputBand={disableInputBand}
           />
         )}
       </Col>
@@ -209,7 +222,7 @@ const TireBuilderView = () => {
       <Col sm={3}>
         {showTtlWgtComp && (
           <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-            <TtlWgtDisplayComp />
+            <TtlWgtDisplayComp bandwgt_for_calculation={bandwgt_for_calculation} />
           </div>
         )}
         <div className="col text-center mt-5">

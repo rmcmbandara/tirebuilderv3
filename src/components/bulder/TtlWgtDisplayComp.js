@@ -6,7 +6,9 @@ import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import { setSettingWgt } from '../../redux/scalStability/stabilityActions'
 import { getTtlWgtTol } from '../../utils/finalWgtTolleranceCreator'
 import { setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
-const TtlWgtDisplayComp = () => {
+import { propTypes } from 'react-bootstrap/esm/Image'
+import PropTypes from 'prop-types'
+const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
   const [bandWgtDisplay, setBandWgtDisplay] = useState('0')
@@ -18,7 +20,6 @@ const TtlWgtDisplayComp = () => {
   const { settingWgt, maxTol, minTol } = useSelector((state) => state.stabilityDetails)
   const dispatch = useDispatch()
   //Get the Band Details
-  const bandwgt = tireCodeDetail?.data?.data?.data[0]?.bandwgt
 
   //Variable Decalrations
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
@@ -34,12 +35,14 @@ const TtlWgtDisplayComp = () => {
   //Calculate total Wgt
   useEffect(() => {
     if (wgtLst?.length > 0 && wgtLst) {
+      //Get the last element of the compound and adjust the weight if tire is pob tire.
+
       const sum_all =
         wgtLst && wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
-      const x = parseFloat(bandwgt) + sum_all
+      const x = parseFloat(bandwgt_for_calculation) + sum_all
       setTtlWgt(x)
     }
-  }, [wgtLst])
+  }, [wgtLst, bandwgt_for_calculation])
 
   //set setting Weight in stability redux
   useEffect(() => {
@@ -63,6 +66,7 @@ const TtlWgtDisplayComp = () => {
   return (
     <Card style={{ minWidth: '500px' }}>
       <Card.Header>
+        {bandwgt_for_calculation}
         <Nav variant="pills" defaultActiveKey="#first">
           <Nav.Item>
             <Nav.Link disabled style={{ fontSize: '35px' }}>
@@ -93,7 +97,9 @@ const TtlWgtDisplayComp = () => {
     </Card>
   )
 }
-
+TtlWgtDisplayComp.propTypes = {
+  bandwgt_for_calculation: propTypes.number,
+}
 export default TtlWgtDisplayComp
 
 /*
