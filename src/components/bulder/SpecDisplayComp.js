@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import { useSelector } from 'react-redux'
-import { Badge, Card, Col, Row, Table, Toast } from 'react-bootstrap'
+import { Badge, Card, Col, Row, Table, Toast, Button } from 'react-bootstrap'
 
 const SpecDisplayComp = () => {
   //States
