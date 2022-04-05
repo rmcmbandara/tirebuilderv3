@@ -18,6 +18,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
   const { settingWgt, maxTol, minTol } = useSelector((state) => state.stabilityDetails)
+  const { actBandWgt, specBandWgt } = useSelector((state) => state.bandWgts)
+  const isSrt = useSelector((state) => state.isSrt)
   const dispatch = useDispatch()
   //Get the Band Details
 
@@ -28,19 +30,41 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   //SpecDetail useEffect
   //Check for spec Availability and if avl get the comp and wgts as an array
   useEffect(() => {
-    setWgtLst(getSpecDetailsList())
+    if (specDetail) {
+      setWgtLst(getSpecDetailsList())
+    }
   }, [specDetail])
 
   //usee Effect for wgtLst change
   //Calculate total Wgt
   useEffect(() => {
-    if (wgtLst?.length > 0 && wgtLst) {
-      //Get the last element of the compound and adjust the weight if tire is pob tire.
+    if (wgtLst) {
+      if (!isSrt) {
+        //For single layer POB Tire
+        const lastElement = wgtLst[wgtLst.length - 1]
+        if (lastElement) {
+          const lastelementWgt = lastElement.wgt
+          //Calculate the compound wgt with respect to bandWgt for calculation
+          //Get Band Detail
+          const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
+          //Difference of bands.
+          const bandWgtDiff = parseFloat(bandwgtSpec) - parseFloat(bandwgt_for_calculation)
+          const trWgtAdj = bandWgtDiff * 1.143
 
-      const sum_all =
-        wgtLst && wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
-      const x = parseFloat(bandwgt_for_calculation) + sum_all
-      setTtlWgt(x)
+          //Ammend the last ekement
+
+          wgtLst[wgtLst.length - 1].wgt = parseFloat(lastelementWgt) + parseFloat(trWgtAdj)
+          console.log(wgtLst[wgtLst.length - 1].wgt)
+        }
+      }
+      if (wgtLst?.length > 0 && wgtLst) {
+        //Get the last element of the compound and adjust the weight if tire is pob tire.
+        const sum_all =
+          wgtLst &&
+          wgtLst.map((item) => parseFloat(item.wgt)).reduce((prev, curr) => prev + curr, 0)
+        const ttlWgtAdj = parseFloat(actBandWgt) + sum_all
+        setTtlWgt(ttlWgtAdj)
+      }
     }
   }, [wgtLst, bandwgt_for_calculation])
 
