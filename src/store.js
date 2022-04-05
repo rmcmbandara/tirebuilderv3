@@ -8,6 +8,8 @@ import { specReducer } from './redux/spec/specReducer'
 import { dataAvlReducer } from './redux/dataAvl/dataAvlReducers'
 import { builderFinalReducer } from './redux/builderFinalData/buildFinalReducers'
 import { scaleReadingReducer } from './redux/scale/scaleReducers'
+import { srtPobToggleReducer } from './redux/srtpob/srtpobReducers'
+import { bandWgtReducer } from './redux/band/bandReducers'
 const initialState = {}
 const reducer = combineReducers({
   stabilityDetails: stabilityReducer,
@@ -18,6 +20,8 @@ const reducer = combineReducers({
   dataAvlReducer: dataAvlReducer,
   builderFinalReducer: builderFinalReducer,
   scaleData: scaleReadingReducer,
+  isSrt: srtPobToggleReducer,
+  bandWgts: bandWgtReducer,
 })
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(reducer, initialState, composeEnhancer(applyMiddleware(thunk)))

@@ -15,6 +15,7 @@ import SpecDisplayComp from 'src/components/bulder/SpecDisplayComp'
 import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
 //Redux---------------------------------
 import { useDispatch, useSelector } from 'react-redux'
+import { setActBandWgt } from 'src/redux/band/bandActions'
 import { updateSN } from '../../redux/builderFinalData/buildFinalActions'
 import { scaleReading } from '../../redux/scale/scaleActions'
 import StabilitySetterComp from 'src/components/StabilitySetterComp'
@@ -23,6 +24,7 @@ import { BubbleController } from 'chart.js'
 import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
 import { isNumeric } from 'src/utils/isNumeric'
 import { getBandWgtTol } from 'src/utils/bandWgtTol'
+import { toggleSrtPob } from '../../redux/srtpob/srtpobActions'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //these 3 states for specAvl,tireCodeAvl and SpecVerMatch
@@ -62,6 +64,7 @@ const TireBuilderView = () => {
   const specDetail = useSelector((state) => state.specDetails)
   const stabilityDetail = useSelector((state) => state.stabilityDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
+  const isSrt = useSelector((state) => state.isSrt)
   //Destructre stability Detail
   const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
 
@@ -116,22 +119,28 @@ const TireBuilderView = () => {
             setBandwgt_for_calculation(0)
             notifyError('අඩු බර බෑන්ඩ් එකක්')
             setBandBarCodeInput('')
+            dispatch(setActBandWgt(0.0))
             bandRef.current.focus()
           } else if (maxTolVal < bandWgt_numeric) {
             notifyError('වැඩි බර බෑන්ඩ් එකක්')
             //Reset band barcode input and band wgt for calculation
             setBandwgt_for_calculation(0)
             setBandBarCodeInput('')
+            dispatch(setActBandWgt(0.0))
             bandRef.current.focus()
           } else {
             //Band Wgt is in the range therfore Show totla wgt component
             setShowTtlWgtComp(true)
-            setDisableInputTireCode(true)
+            //setDisableInputTireCode(true)
+            dispatch(setActBandWgt(bandWgt_numeric))
           }
         }
       } else {
         setShowTtlWgtComp(false) //Hide ttlWgt componeint
+        dispatch(setActBandWgt(0.0))
       }
+    } else {
+      dispatch(setActBandWgt(0.0))
     }
   }, [bandBarCodeInput])
   //Scale Reading------------------------------------------------------------------
@@ -163,14 +172,16 @@ const TireBuilderView = () => {
         (res) => {
           if (res.data && res.data.rows[0]) {
             switch (res.data.rows[0].tcat) {
-              case 1:
+              case 1: //SRTTire
                 setShowTtlWgtComp(true)
                 setShowBandInputComp(false)
                 setDisableInputTireCode(true)
+                dispatch(toggleSrtPob(true))
                 return
-              case 2:
+              case 2: //POB Tire
                 setShowTtlWgtComp(false)
                 setShowBandInputComp(true)
+                dispatch(toggleSrtPob(false))
                 bandRef?.current.focus()
                 return
               default:
@@ -183,6 +194,7 @@ const TireBuilderView = () => {
       )
     }
   }, [tireCodeInput])
+
   //Get the band wgt min and max tollerences
   useEffect(() => {
     if (tireCodeDetail) {
@@ -205,6 +217,7 @@ const TireBuilderView = () => {
           tireCodeInput={tireCodeInput}
           onTireCodeChange={setTirecodeInputFun}
           disableInputTireCode={disableInputTireCode}
+          onBandBarcodeChange={setBandBarCodeInputFun}
         />
         <div className="m-3"></div>
         {showBandInputComp && (
@@ -212,8 +225,6 @@ const TireBuilderView = () => {
             bandRef={bandRef}
             bandBarCodeInput={bandBarCodeInput}
             onBandBarcodeChange={setBandBarCodeInputFun}
-            name={bandBarCodeInput}
-            onNameChange={setBandBarCodeInput}
             disableInputBand={disableInputBand}
           />
         )}

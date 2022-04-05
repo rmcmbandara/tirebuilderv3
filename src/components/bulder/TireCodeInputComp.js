@@ -10,10 +10,18 @@ import {
   updateSpecAvl,
   updateSpecVerMach,
 } from '../../redux/dataAvl/dataAvlActions'
+import { setSpecBandWgt } from '../../redux/band/bandActions'
 import { setTireCodeDetail } from '../../redux/tireCodeDetail/tireCodeDetailsActions'
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 import { setSettingWgt, setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
-const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTireCodeChange }) => {
+import { toggleSrtPob } from 'src/redux/srtpob/srtpobActions'
+const TireCodeInputComp = ({
+  disableInputTireCode,
+  inputRef,
+  tireCodeInput,
+  onTireCodeChange,
+  onBandBarcodeChange,
+}) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
 
@@ -62,6 +70,12 @@ const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTi
       }
       dispatch(getSpecDetail(params))
       dispatch(updateTireCodeAvl(true)) //Send tireCodeAvl Detail to Perent
+      // band wgt spec
+      //Get Band Detail
+      const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
+      if (bandwgtSpec) {
+        dispatch(setSpecBandWgt(bandwgtSpec))
+      }
     }
   }, [tireCodeDetail])
 
@@ -70,13 +84,16 @@ const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTi
     if (tireCodeTxt?.data?.length === 8) {
       dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
     } else {
-      dispatch(setTireCodeDetail('000')) //Big not possible Number
+      dispatch(setTireCodeDetail('000')) //'000' is aBig not possible Number
       dispatch(resetSpec()) //Reset the spec
       setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
       dispatch(setSettingWgt(0)) //Set scale stability setting weing to 0
       dispatch(setMinTol(0)) //Set minimum Tolerance Value 0
       dispatch(setMaxTol(0)) //Set Max Tolerance Value 0
+      dispatch(toggleSrtPob(null)) //Set srt or pob tire to null
+      dispatch(setSpecBandWgt(0.0)) //Band Spec Wgt -->0kg
+      onBandBarcodeChange('') //Set band barcode to ""
     }
   }, [tireCodeTxt])
 
@@ -148,5 +165,6 @@ TireCodeInputComp.propTypes = {
   tireCodeInput: PropTypes.number,
   onTireCodeChange: PropTypes.func,
   disableInputTireCode: PropTypes.bool,
+  onBandBarcodeChange: PropTypes.func,
 }
 export default TireCodeInputComp
