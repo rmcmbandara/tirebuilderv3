@@ -83,14 +83,11 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   //Click Handler
   const [mvavArr, setMvavArr] = useState([])
   const [count, setCount] = useState(0)
-  const clickHandler = () => {
-    const [minValue, maxValue] = getTtlWgtTol(101)
-  }
+  const clickHandler = () => {}
 
   return (
     <Card style={{ minWidth: '500px' }}>
       <Card.Header>
-        {bandwgt_for_calculation}
         <Nav variant="pills" defaultActiveKey="#first">
           <Nav.Item>
             <Nav.Link disabled style={{ fontSize: '35px' }}>

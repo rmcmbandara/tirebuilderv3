@@ -83,9 +83,10 @@ const SpecDisplayComp = () => {
   )
   return (
     <div>
-      {/* Display Compound */}
+      {/* Display Compound details */}
       <div>{lst?.length > 0 && displayComp()}</div>
-      {/* Display  */}
+
+      {/* Display Spec Not Available Batch if spec is not avl */}
       <div>
         {tireCodeTxt?.data?.length === 8 ? (
           specAvl ? (

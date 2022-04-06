@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Col, Container, Form, Row } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-import { notifyError, notifyErrorQk, notifyWarningQk } from 'src/utils/toastify'
+import { notifyError, notifyErrorQk, notifySuccessQk, notifyWarningQk } from 'src/utils/toastify'
 //Redux
 import { useDispatch, useSelector } from 'react-redux'
 import { tireCodeTextChange } from '../../redux/tireCodeText/tireCodeTextActions'
@@ -15,13 +15,8 @@ import { setTireCodeDetail } from '../../redux/tireCodeDetail/tireCodeDetailsAct
 import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 import { setSettingWgt, setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
 import { toggleSrtPob } from 'src/redux/srtpob/srtpobActions'
-const TireCodeInputComp = ({
-  disableInputTireCode,
-  inputRef,
-  tireCodeInput,
-  onTireCodeChange,
-  onBandBarcodeChange,
-}) => {
+import { Button } from 'react-bootstrap'
+const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTireCodeChange }) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
 
@@ -78,65 +73,6 @@ const TireCodeInputComp = ({
       }
     }
   }, [tireCodeDetail])
-
-  //UseEffect for input tireCodeText
-  useEffect(() => {
-    if (tireCodeTxt?.data?.length === 8) {
-      dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
-    } else {
-      dispatch(setTireCodeDetail('000')) //'000' is aBig not possible Number
-      dispatch(resetSpec()) //Reset the spec
-      setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
-      dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
-      dispatch(setSettingWgt(0)) //Set scale stability setting weing to 0
-      dispatch(setMinTol(0)) //Set minimum Tolerance Value 0
-      dispatch(setMaxTol(0)) //Set Max Tolerance Value 0
-      dispatch(toggleSrtPob(null)) //Set srt or pob tire to null
-      dispatch(setSpecBandWgt(0.0)) //Band Spec Wgt -->0kg
-      onBandBarcodeChange('') //Set band barcode to ""
-    }
-  }, [tireCodeTxt])
-
-  //SpecDetail useEffect
-  //Check for spec Availability
-  useEffect(() => {
-    //Check for Spe availability
-    if (
-      !specDetail?.data?.data &&
-      tireCodeTxt?.data?.length === 8 &&
-      !showed &&
-      !specDetail.loading
-    ) {
-      /*No spec. Notify, 
-      setShowed true because not to show notification two times. 
-      Tirecode input put ""
-      focus in input again
-       */
-
-      setshowed(true)
-      inputRef?.current.focus()
-      return notifyErrorQk(`spec නැත`)
-    }
-
-    //specVersion Matching and Spec Availability send to the peraent
-    if (specDetail?.data?.data) {
-      dispatch(updateSpecAvl(true)) //Send SpecAvl info to perent base on Spec Avilability
-
-      //Get the spec Version of the tireCode
-      var specVerInput = tireCodeInput.substr(tireCodeInput.length - 3)
-      var specVerDB = specDetail?.data?.data?.spec?.specversion.toString()
-
-      //Send specVerMach info to perent base on Spec Avilability
-      if (specVerInput === specVerDB) {
-        dispatch(updateSpecVerMach(true))
-      } else {
-        dispatch(updateSpecVerMach(false))
-      }
-    } else {
-      dispatch(updateSpecAvl(false)) //Send SpecAvl info to perent base on Spec Avilability
-      dispatch(updateSpecVerMach(false)) //Send specVerMach info to perent base on Spec Avilability
-    }
-  }, [specDetail])
 
   return (
     <>
