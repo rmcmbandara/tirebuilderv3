@@ -35,7 +35,7 @@ import { getBandWgtTol } from 'src/utils/bandWgtTol'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //Inputs for tireCode and BandBarcode
-  const [tireCodeInput, setTireCodeInput] = useState('1177511') //TireCode input text state
+  const [tireCodeInput, setTireCodeInput] = useState('10510107') //TireCode input text state
   const [bandBarCodeInput, setBandBarCodeInput] = useState('') //TireCode input text state
 
   //Actual band weight to pass to ttlWgt Calculation componeint
@@ -154,7 +154,7 @@ const TireBuilderView = () => {
       SLTLDBConnection.get(`builder/nextsn`).then((res) => {
         setNxtSN(res.data)
       })
-    }, 1000)
+    }, 5000)
     return () => {
       clearInterval(timer)
     }
@@ -274,6 +274,7 @@ const TireBuilderView = () => {
       setBandBarCodeInputFun('') //Set band barcode to ""
       dispatch(updateEdc1StTire(null))
       setShowBandInputComp(false)
+      dispatch(setSpecBandWgt(null))
     }
   }, [tireCodeTxt])
 
@@ -300,7 +301,9 @@ const TireBuilderView = () => {
           onBandBarcodeChange={setBandBarCodeInputFun}
         />
         <div className="m-3">
-          <Button onClick={handleClickRefresh}>Refresh</Button>
+          <Button variant="warning" onClick={handleClickRefresh}>
+            Refresh
+          </Button>
         </div>
         {showBandInputComp && (
           <BandWgtScanComp
@@ -315,7 +318,7 @@ const TireBuilderView = () => {
       <Col sm={3}>
         {showTtlWgtComp && (
           <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-            <TtlWgtDisplayComp bandwgt_for_calculation={bandwgt_for_calculation} />
+            <TtlWgtDisplayComp bandwgt_for_calculation={bandwgt_for_calculation} nxtSN={nxtSN} />
           </div>
         )}
         <div className="col text-center mt-5">

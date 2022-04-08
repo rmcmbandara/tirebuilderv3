@@ -8,7 +8,8 @@ import { getTtlWgtTol } from '../../utils/finalWgtTolleranceCreator'
 import { setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
 import { propTypes } from 'react-bootstrap/esm/Image'
 import PropTypes from 'prop-types'
-const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
+import { notifySuccess, notifySuccessQk } from 'src/utils/toastify'
+const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
   const [bandWgtDisplay, setBandWgtDisplay] = useState('0')
@@ -21,11 +22,11 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
   const { actBandWgt, specBandWgt } = useSelector((state) => state.bandWgts)
   const isSrt = useSelector((state) => state.isSrt)
   const dispatch = useDispatch()
-  //Get the Band Details
+  //Redux State
+  const tireCodeTxt = useSelector((state) => state.tireCodeText)
 
   //Variable Decalrations
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
-
   const specAvl = dataAvl?.specAvl
   //SpecDetail useEffect
   //Check for spec Availability and if avl get the comp and wgts as an array
@@ -79,12 +80,92 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
       dispatch(setMinTol(minValue))
     }
   }, [ttlWgt])
+  //Functions and Hanlers
+  const clickHandler = () => {
+    const sn = nxtSN
+    const tirecode = tireCodeTxt.data?.slice(0, 5)
+    const sver = specDetail.data.data.spec.specversion
+    const bvol = specDetail.data.data.spec.bvol
+    const cvol = specDetail.data.data.spec.cvol
+    const trvol = specDetail.data.data.spec.trvol
 
-  //Click Handler
-  const [mvavArr, setMvavArr] = useState([])
-  const [count, setCount] = useState(0)
-  const clickHandler = () => {}
+    //Insert builder table
+    SLTLDBConnection.post(`builder/insertGeenTire`, {
+      sn,
+    })
+      .then((res1) => {
+        console.log('updated temp tires')
+      })
+      .catch((e) => {
+        console.log(e)
+      })
 
+    if (isSrt) {
+      console.log(specDetail.data.data.spec.bvol)
+    } else {
+      notifySuccess('POB')
+    }
+    //SRTTire
+    /*
+        sn,--nxtSN
+        tirecode,--tireCodeTxt.data
+        sver,
+        mfgdate,
+        bvol,
+        cvol,
+        trvol,
+        bonwgt,
+        bsg,
+        csg,
+        trsg,
+        actwgt,
+        bbatchno,
+        cbatchno,
+        trbatchno,
+        bcode,
+        ccode,
+        trcode, --specDetail.data.data.spec.trcomp
+        cut,
+        specid,
+        stdbandwgt,
+        actbandwgt,
+        bandid
+
+        bcode: 1
+        bcomp: "BFA 10"
+        beadavl: 1
+        bonwgt: "3.00000"
+        bsg: "1.16000"
+        bvol: "25.99138"
+        bwidth: "230-270"
+        ccode: 0
+        ccomp: "-"
+        compid: 9
+        csg: "0.00000"
+        curbatchno: 0
+        cvol: "0.00000"
+        cwidth: "270"
+        edc1sttire: 2
+        h: "1.172"
+        l: "1.152"
+        lstupdateddate: "2021-10-08T07:25:25.783Z"
+        m: "1.162"
+        rndaproval: 2
+        specid: 664
+        specversion: 107
+        stdbatchwgt: "55.792"
+        tcat: 1
+        tiretypeid: 10
+        totvol: "76.68000"
+        trcode: 9
+        trcomp: "TSY 33B"
+        trsg: "1.14000"
+        trvol: "51.00877"
+        trwidth: "280-370"
+        vid: 286
+
+      */
+  }
   return (
     <Card style={{ minWidth: '500px' }}>
       <Card.Header>
@@ -120,6 +201,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation }) => {
 }
 TtlWgtDisplayComp.propTypes = {
   bandwgt_for_calculation: propTypes.number,
+  nxtSN: propTypes.number,
 }
 export default TtlWgtDisplayComp
 
