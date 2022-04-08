@@ -90,7 +90,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     const trvol = specDetail.data.data.spec.trvol
 
     //Insert builder table
-    SLTLDBConnection.post(`builder/insertGeenTire`, {
+    SLTLDBConnection.post(`builder/newgt`, {
       sn,
     })
       .then((res1) => {
