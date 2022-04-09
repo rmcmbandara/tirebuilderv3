@@ -32,13 +32,16 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
   return (
-    <CHeader position="sticky" className="mb-1">
-      <CContainer fluid>
-        <CHeaderToggler className="ps-1" onClick={() => dispatch(toggleSideBarShow(!sidebarShow))}>
+    <CHeader position="sticky" className="mb-1 d-flex justify-content-center">
+      <CContainer>
+        <CHeaderToggler
+          className="ps-1 d-inline"
+          onClick={() => dispatch(toggleSideBarShow(!sidebarShow))}
+        >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
         {dataAvl.tcAvl ? <TireDetailDesplayComp /> : <></>}
-        <WgtDisplay />
+        <h1></h1>
       </CContainer>
       <CHeaderDivider />
     </CHeader>

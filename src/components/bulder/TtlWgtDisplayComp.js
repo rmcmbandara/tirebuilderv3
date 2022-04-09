@@ -238,7 +238,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
             <></>
           )}
         </div>
-        {timeOutCountValue < counter ? (
+        {timeOutCountValue < counter && inRange ? (
           <Button
             className="btn btn-default fs-1 mx-auto "
             style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
