@@ -9,6 +9,7 @@ import { setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions
 import { propTypes } from 'react-bootstrap/esm/Image'
 import PropTypes from 'prop-types'
 import { notifySuccess, notifySuccessQk } from 'src/utils/toastify'
+import { STABILITY_WAITING, TIMER_INTERVAL } from 'src/utils/constants'
 const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -17,6 +18,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [scaleReading, setScaleReading] = useState(0)
   const [counter, setCounter] = useState(0)
   const [inRange, setInRange] = useState(false)
+  const [timeOutCountValue, setTimeOutCountValue] = useState(30)
+  const [timeOutPercentate, setTimeOutPercentate] = useState(0)
   //Redux Selectors-------------------------------------
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
@@ -101,10 +104,36 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       dispatch(setMinTol(minValue))
     }
   }, [ttlWgt])
+  //*******************-----Timer--------------************************
+  //Setup the timer
   useEffect(() => {
-    
+    const interval = setInterval(() => {
+      setCounter((prevCounter) => prevCounter + 1)
+    }, TIMER_INTERVAL)
+    return () => clearInterval(interval)
+  }, [])
+
+  //Reset the counter value
+  useEffect(() => {
+    setCounter(0)
   }, [inRange])
 
+  //Counter calculations
+  useEffect(() => {
+    setTimeOutCountValue(STABILITY_WAITING * (1000 / TIMER_INTERVAL))
+    if (inRange && timeOutCountValue < counter) {
+      console.log(timeOutCountValue)
+    }
+
+    const percentage = Number((counter * 100) / timeOutCountValue).toFixed(0)
+    if (percentage > 100) {
+      setTimeOutPercentate(100)
+    } else {
+      setTimeOutPercentate(percentage)
+    }
+
+    //`${Number((counter * 100) / timeOutCountValue).toFixed(0)}%`
+  }, [counter])
   //-------------------------------------------------------------------------------------
   //Functions and Hanlers
   const clickHandler = () => {
@@ -182,36 +211,44 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       </Card.Header>
       <Card.Header>
         <Badge style={{ fontSize: '40px' }} bg="warning" text="primary">
-          {settingWgt.toFixed(2)}
+          {minTol.toFixed(2)}
         </Badge>
         <Badge style={{ fontSize: '60px' }} bg="light" text="dark">
           {Number(scaleReading).toFixed(2)}
         </Badge>
         <Badge style={{ fontSize: '40px' }} bg="warning" text="primary">
-          {settingWgt.toFixed(2)}
+          {maxTol.toFixed(2)}
         </Badge>
       </Card.Header>
       <Card.Body>
         <div className="col text-center mt-5">
           {inRange ? (
-            <div>
-              <div className="mb-1">
-                <ProgressBar>
-                  <ProgressBar variant="success" now={33} key={1} label={`${33}%`} />
-                </ProgressBar>
-              </div>
-              <Button
-                className="btn btn-default fs-1 mx-auto "
-                style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-                onClick={clickHandler}
-              >
-                ENTER
-              </Button>
+            <div className="mb-1">
+              <ProgressBar>
+                <ProgressBar
+                  variant="success"
+                  max={timeOutCountValue}
+                  now={counter}
+                  key={1}
+                  label={timeOutPercentate + '%'}
+                />
+              </ProgressBar>
             </div>
           ) : (
             <></>
           )}
         </div>
+        {timeOutCountValue < counter ? (
+          <Button
+            className="btn btn-default fs-1 mx-auto "
+            style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
+            onClick={clickHandler}
+          >
+            ENTER
+          </Button>
+        ) : (
+          <></>
+        )}
       </Card.Body>
     </Card>
   )

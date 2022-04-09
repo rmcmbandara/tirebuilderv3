@@ -286,11 +286,7 @@ const TireBuilderView = () => {
     setTireCodeInput('')
   }
   return (
-    <Row
-      style={{
-        backgroundColor: !stableAbsolute && 'lightgray',
-      }}
-    >
+    <Row>
       <Col sm={3}>
         <div style={{ marginTop: '50px', marginRight: 0 }}>
           <SpecDisplayComp />
