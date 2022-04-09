@@ -1,32 +1,42 @@
 function getTtlWgtTol(ttlWgt) {
-  let minValue
-  let maxValue
-
-  if (parseFloat(ttlWgt) < 10) {
-    //Less than 10
-    minValue = parseFloat(ttlWgt) * 0.99
-    maxValue = parseFloat(ttlWgt) * 1.01
+  let x
+  if (parseFloat(ttlWgt) < 7) {
+    //Less than 7
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+  } else if (parseFloat(ttlWgt) < 15) {
+    // //7-15
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   } else if (parseFloat(ttlWgt) < 30) {
     //Less than 30
-    minValue = parseFloat(ttlWgt) * 0.97
-    maxValue = parseFloat(ttlWgt) * 1.03
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   } else if (parseFloat(ttlWgt) < 50) {
-    //Less than 50
-    minValue = parseFloat(ttlWgt) * 0.99
-    maxValue = parseFloat(ttlWgt) * 1.01
+    //30 to 50
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   } else if (parseFloat(ttlWgt) < 70) {
     //Less than 70
-    minValue = parseFloat(ttlWgt) * 0.99
-    maxValue = parseFloat(ttlWgt) * 1.01
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   } else if (parseFloat(ttlWgt) < 100) {
     //Less than 100
-    minValue = parseFloat(ttlWgt) * 0.94
-    maxValue = parseFloat(ttlWgt) * 1.03
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   } else {
     //Bigger Tires
-    minValue = parseFloat(ttlWgt) * 0.96
-    maxValue = parseFloat(ttlWgt) * 1.01
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
   }
+  const minValue = x.minValue
+  const maxValue = x.maxValue
   return [minValue, maxValue]
+}
+
+const getMaxMinTolTtlWgt = (wgt, stepValue = 0.05, maxSteps = 1, minSteps = 0) => {
+  //---------------------------------------------------------------
+  const intPart = Number(Number(wgt).toString().split('.')[0])
+  //----------------------------
+  const decimalPartStr = Number(wgt).toString().split('.')[1]
+  const deicalPartNum = Number('0.' + decimalPartStr)
+  //---------------------------------
+  var quo = Math.floor(deicalPartNum / stepValue)
+  const maxValue = Number(intPart) + quo * stepValue + stepValue * maxSteps
+  const minValue = Number(intPart) + quo * stepValue - stepValue * minSteps
+  return { minValue, maxValue }
 }
 export { getTtlWgtTol }

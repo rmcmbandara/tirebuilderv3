@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Nav } from 'react-bootstrap'
+import { Badge, Button, Card, Nav, ProgressBar } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import SLTLDBConnection from 'src/apis/SLTLDBConnection'
 import { getSpecDetailsList } from 'src/utils/specDetailCreator'
@@ -15,6 +15,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [bandWgtDisplay, setBandWgtDisplay] = useState('0')
   const [ttlWgt, setTtlWgt] = useState(0)
   const [scaleReading, setScaleReading] = useState(0)
+  const [counter, setCounter] = useState(0)
+  const [inRange, setInRange] = useState(false)
   //Redux Selectors-------------------------------------
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
@@ -29,10 +31,23 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //Variable Decalrations
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
   const specAvl = dataAvl?.specAvl
+  //------------------------------------------------------------
+  //UseEffect for stability
+
   //UseEffect for scale reading detection
   useEffect(() => {
     if (scale?.reading?.reading) {
-      setScaleReading(scale?.reading?.reading?.wgtReading)
+      if (scale?.reading?.reading?.wgtReading) {
+        setScaleReading(scale?.reading?.reading?.wgtReading)
+        if (
+          Number(minTol) <= Number(scale?.reading?.reading?.wgtReading) &&
+          Number(maxTol) > Number(scale?.reading?.reading?.wgtReading)
+        ) {
+          setInRange(true)
+        } else {
+          setInRange(false)
+        }
+      }
     }
   }, [scale])
   //SpecDetail useEffect
@@ -62,7 +77,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           //Ammend the last ekement
 
           wgtLst[wgtLst.length - 1].wgt = parseFloat(lastelementWgt) + parseFloat(trWgtAdj)
-          console.log(wgtLst[wgtLst.length - 1].wgt)
         }
       }
       if (wgtLst?.length > 0 && wgtLst) {
@@ -87,6 +101,10 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       dispatch(setMinTol(minValue))
     }
   }, [ttlWgt])
+  useEffect(() => {
+    
+  }, [inRange])
+
   //-------------------------------------------------------------------------------------
   //Functions and Hanlers
   const clickHandler = () => {
@@ -156,33 +174,43 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     }
   }
   return (
-    <Card style={{ minWidth: '500px' }}>
+    <Card className="text-center" style={{ minWidth: '600px' }}>
       <Card.Header>
-        <Nav variant="pills" defaultActiveKey="#first">
-          <Nav.Item>
-            <Nav.Link disabled style={{ fontSize: '35px' }}>
-              {minTol.toFixed(2)}
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link style={{ fontSize: '60px' }}>{settingWgt.toFixed(2)}</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link disabled style={{ fontSize: '35px' }}>
-              {maxTol.toFixed(2)}
-            </Nav.Link>
-          </Nav.Item>
-        </Nav>
+        <Badge style={{ fontSize: '60px' }} bg="light" text="primary">
+          {settingWgt.toFixed(2)}
+        </Badge>
+      </Card.Header>
+      <Card.Header>
+        <Badge style={{ fontSize: '40px' }} bg="warning" text="primary">
+          {settingWgt.toFixed(2)}
+        </Badge>
+        <Badge style={{ fontSize: '60px' }} bg="light" text="dark">
+          {Number(scaleReading).toFixed(2)}
+        </Badge>
+        <Badge style={{ fontSize: '40px' }} bg="warning" text="primary">
+          {settingWgt.toFixed(2)}
+        </Badge>
       </Card.Header>
       <Card.Body>
         <div className="col text-center mt-5">
-          <Button
-            className="btn btn-default fs-1 mx-auto "
-            style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-            onClick={clickHandler}
-          >
-            ENTER
-          </Button>
+          {inRange ? (
+            <div>
+              <div className="mb-1">
+                <ProgressBar>
+                  <ProgressBar variant="success" now={33} key={1} label={`${33}%`} />
+                </ProgressBar>
+              </div>
+              <Button
+                className="btn btn-default fs-1 mx-auto "
+                style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
+                onClick={clickHandler}
+              >
+                ENTER
+              </Button>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </Card.Body>
     </Card>
@@ -193,25 +221,3 @@ TtlWgtDisplayComp.propTypes = {
   nxtSN: propTypes.number,
 }
 export default TtlWgtDisplayComp
-
-/*
-
-
-   <Card style={{ minWidth: '400px' }}>
-      <Card.Header as="h5">Total Wgt</Card.Header>
-      <Card.Body>
-        <div className="col text-center">
-          <Card.Title style={{ fontSize: '50px' }}>{settingWgt.toFixed(2)}</Card.Title>
-        </div>
-        <div className="col text-center mt-5">
-          <Button
-            className="btn btn-default fs-1 mx-auto "
-            style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-            onClick={clickHandler}
-          >
-            ENTER
-          </Button>
-        </div>
-      </Card.Body>
-    </Card>
-*/
