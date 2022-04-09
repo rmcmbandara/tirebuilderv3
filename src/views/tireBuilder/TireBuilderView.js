@@ -35,7 +35,7 @@ import { getBandWgtTol } from 'src/utils/bandWgtTol'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //Inputs for tireCode and BandBarcode
-  const [tireCodeInput, setTireCodeInput] = useState('10510107') //TireCode input text state
+  const [tireCodeInput, setTireCodeInput] = useState('') //TireCode input text state
   const [bandBarCodeInput, setBandBarCodeInput] = useState('') //TireCode input text state
 
   //Actual band weight to pass to ttlWgt Calculation componeint
@@ -124,7 +124,8 @@ const TireBuilderView = () => {
       } else {
         //Spec version does not match
         refreshTireCodeInput()
-        notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න')
+        notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
+        notifyError(specDetail?.data?.data?.spec?.specversion.toString())
       }
     } else if (edc1stTire == 1) {
       //EDC 1st Tire

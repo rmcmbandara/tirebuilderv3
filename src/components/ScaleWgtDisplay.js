@@ -30,7 +30,6 @@ const WgtDisplay = () => {
   const stabilityDetail = useSelector((state) => state.stabilityDetails)
   const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, movingAverage } = stabilityDetail //Destructre stability Detail
   const dispatch = useDispatch()
-
   //UseEffect for scale reading detection
   useEffect(() => {
     if (scale?.reading?.reading) {
