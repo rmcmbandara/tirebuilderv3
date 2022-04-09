@@ -14,20 +14,27 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [specDetailObj, setSpecDetailObj] = useState({})
   const [bandWgtDisplay, setBandWgtDisplay] = useState('0')
   const [ttlWgt, setTtlWgt] = useState(0)
+  const [scaleReading, setScaleReading] = useState(0)
   //Redux Selectors-------------------------------------
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
+  const bandWgts = useSelector((state) => state.bandWgts)
   const dataAvl = useSelector((state) => state.dataAvlReducer)
   const { settingWgt, maxTol, minTol } = useSelector((state) => state.stabilityDetails)
   const { actBandWgt, specBandWgt } = useSelector((state) => state.bandWgts)
   const isSrt = useSelector((state) => state.isSrt)
+  const scale = useSelector((state) => state.scaleData)
   const dispatch = useDispatch()
-  //Redux State
   const tireCodeTxt = useSelector((state) => state.tireCodeText)
-
   //Variable Decalrations
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
   const specAvl = dataAvl?.specAvl
+  //UseEffect for scale reading detection
+  useEffect(() => {
+    if (scale?.reading?.reading) {
+      setScaleReading(scale?.reading?.reading?.wgtReading)
+    }
+  }, [scale])
   //SpecDetail useEffect
   //Check for spec Availability and if avl get the comp and wgts as an array
   useEffect(() => {
@@ -50,7 +57,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           const bandwgtSpec = tireCodeDetail?.data?.data?.data[0]?.bandwgt
           //Difference of bands.
           const bandWgtDiff = parseFloat(bandwgtSpec) - parseFloat(bandwgt_for_calculation)
-          const trWgtAdj = bandWgtDiff * 1.143
+          const trWgtAdj = bandWgtDiff * 0.143
 
           //Ammend the last ekement
 
@@ -80,18 +87,49 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       dispatch(setMinTol(minValue))
     }
   }, [ttlWgt])
+  //-------------------------------------------------------------------------------------
   //Functions and Hanlers
   const clickHandler = () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
+    const tc = tirecode //for stock.stk table
+    const pid = tireCodeDetail?.data?.data?.data[0]?.pid
     const sver = specDetail.data.data.spec.specversion
     const bvol = specDetail.data.data.spec.bvol
     const cvol = specDetail.data.data.spec.cvol
     const trvol = specDetail.data.data.spec.trvol
-
+    const bonwgt = specDetail.data.data.spec.bonwgt
+    const actwgt = scaleReading
+    const bsg = specDetail.data.data.spec.bsg
+    const csg = specDetail.data.data.spec.csg
+    const trsg = specDetail.data.data.spec.trsg
+    const bcode = specDetail.data.data.spec.bcode
+    const ccode = specDetail.data.data.spec.ccode
+    const trcode = specDetail.data.data.spec.trcode
+    const specid = specDetail.data.data.spec.specid
+    const stdbandwgt = bandWgts?.specBandWgt
+    const actbandwgt = bandWgts?.actBandWgt
+    const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
     //Insert builder table
     SLTLDBConnection.post(`builder/newgt`, {
       sn,
+      tirecode,
+      sver,
+      bvol,
+      cvol,
+      trvol,
+      bsg,
+      csg,
+      trsg,
+      bonwgt,
+      actwgt,
+      bcode,
+      ccode,
+      trcode,
+      specid,
+      stdbandwgt,
+      actbandwgt,
+      bandid,
     })
       .then((res1) => {
         console.log('updated temp tires')
@@ -99,72 +137,23 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       .catch((e) => {
         console.log(e)
       })
-
+    //Update Stcok Table---------------------------------------------------------
+    SLTLDBConnection.post(`stk/insert`, {
+      sn,
+      pid,
+      tc,
+    })
+      .then((res1) => {
+        console.log('updated temp tires')
+      })
+      .catch((e) => {
+        console.log(e)
+      })
     if (isSrt) {
       console.log(specDetail.data.data.spec.bvol)
     } else {
       notifySuccess('POB')
     }
-    //SRTTire
-    /*
-        sn,--nxtSN
-        tirecode,--tireCodeTxt.data
-        sver,
-        mfgdate,
-        bvol,
-        cvol,
-        trvol,
-        bonwgt,
-        bsg,
-        csg,
-        trsg,
-        actwgt,
-        bbatchno,
-        cbatchno,
-        trbatchno,
-        bcode,
-        ccode,
-        trcode, --specDetail.data.data.spec.trcomp
-        cut,
-        specid,
-        stdbandwgt,
-        actbandwgt,
-        bandid
-
-        bcode: 1
-        bcomp: "BFA 10"
-        beadavl: 1
-        bonwgt: "3.00000"
-        bsg: "1.16000"
-        bvol: "25.99138"
-        bwidth: "230-270"
-        ccode: 0
-        ccomp: "-"
-        compid: 9
-        csg: "0.00000"
-        curbatchno: 0
-        cvol: "0.00000"
-        cwidth: "270"
-        edc1sttire: 2
-        h: "1.172"
-        l: "1.152"
-        lstupdateddate: "2021-10-08T07:25:25.783Z"
-        m: "1.162"
-        rndaproval: 2
-        specid: 664
-        specversion: 107
-        stdbatchwgt: "55.792"
-        tcat: 1
-        tiretypeid: 10
-        totvol: "76.68000"
-        trcode: 9
-        trcomp: "TSY 33B"
-        trsg: "1.14000"
-        trvol: "51.00877"
-        trwidth: "280-370"
-        vid: 286
-
-      */
   }
   return (
     <Card style={{ minWidth: '500px' }}>
