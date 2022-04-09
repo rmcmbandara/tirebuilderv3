@@ -64,7 +64,6 @@ const WgtDisplay = () => {
       <Card.Body>
         <div className="col text-center">
           <p style={{ fontSize: '65px' }}>{scaleReading && scaleReading}</p>
-          <p style={{ fontSize: '65px' }}>{movingAverage && movingAverage.toFixed(2)}</p>
         </div>
       </Card.Body>
     </Card>

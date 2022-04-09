@@ -32,6 +32,7 @@ import { setTireCodeDetail } from 'src/redux/tireCodeDetail/tireCodeDetailsActio
 import StabilitySetterComp from 'src/components/StabilitySetterComp'
 import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
 import { getBandWgtTol } from 'src/utils/bandWgtTol'
+import CountDownTmer from 'src/components/bulder/CountDownTmer'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //Inputs for tireCode and BandBarcode
