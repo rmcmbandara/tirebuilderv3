@@ -41,7 +41,7 @@ const AppHeader = () => {
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
         {dataAvl.tcAvl ? <TireDetailDesplayComp /> : <></>}
-        <h1></h1>
+        <WgtDisplay />
       </CContainer>
       <CHeaderDivider />
     </CHeader>
