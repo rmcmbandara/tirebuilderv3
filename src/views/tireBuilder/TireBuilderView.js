@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { Badge, Button, Col, Dropdown, DropdownButton, Form, Row, Stack } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../../src/apis/SLTLDBConnection'
@@ -156,7 +156,7 @@ const TireBuilderView = () => {
       SLTLDBConnection.get(`builder/nextsn`).then((res) => {
         setNxtSN(res.data)
       })
-    }, 5000)
+    }, 1200)
     return () => {
       clearInterval(timer)
     }
@@ -264,7 +264,6 @@ const TireBuilderView = () => {
     if (tireCodeTxt?.data?.length === 8) {
       dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
     } else {
-      dispatch(setTireCodeDetail('000')) //'000' is aBig not possible Number
       dispatch(resetSpec()) //Reset the spec
       setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
@@ -294,7 +293,6 @@ const TireBuilderView = () => {
         <TireCodeInputComp
           inputRef={inputRef}
           tireCodeInput={tireCodeInput}
-          onTireCodeChange={setTirecodeInputFun}
           disableInputTireCode={disableInputTireCode}
           onBandBarcodeChange={setBandBarCodeInputFun}
           onTireCodeBarCodeChange={setTirecodeInputFun}

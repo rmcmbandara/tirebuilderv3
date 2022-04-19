@@ -11,6 +11,7 @@ const setTireCodeDetail = (tireCode) => async (dispatch) => {
   try {
     dispatch({ type: TIRECODE_READING_REQUEST })
     const { data } = await SLTLDBConnection.get(`/tirecode/getdetail/${tireCode}`)
+    console.log(tireCode)
     dispatch({ type: TIRECODE_READING_SUCCESS, payload: data })
   } catch (error) {
     dispatch({ type: TIRECODE_READING_FAIL, payload: error.message })
