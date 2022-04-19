@@ -297,6 +297,7 @@ const TireBuilderView = () => {
           onTireCodeChange={setTirecodeInputFun}
           disableInputTireCode={disableInputTireCode}
           onBandBarcodeChange={setBandBarCodeInputFun}
+          onTireCodeBarCodeChange={setTirecodeInputFun}
         />
         <div className="m-3">
           <Button variant="warning" onClick={handleClickRefresh}>
