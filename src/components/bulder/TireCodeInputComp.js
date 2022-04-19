@@ -16,7 +16,12 @@ import { getSpecDetail, resetSpec } from 'src/redux/spec/specActions'
 import { setSettingWgt, setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
 import { toggleSrtPob } from 'src/redux/srtpob/srtpobActions'
 import { Button } from 'react-bootstrap'
-const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTireCodeChange }) => {
+const TireCodeInputComp = ({
+  disableInputTireCode,
+  inputRef,
+  tireCodeInput,
+  onTireCodeBarCodeChange,
+}) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
 
@@ -28,13 +33,13 @@ const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTi
   const specDetail = useSelector((state) => state.specDetails)
   //Functions----------------------------------------------------------------
   //TireCode input change handler
-  const inputChangeHandler = useCallback((e) => {
-    //replace non-digits with blank
-    const value = e.target.value.replace(/[^\d]/, '')
-    if (onTireCodeChange(value) !== 0) {
-      // setTireCodeInputFun(value)
-    }
-  })
+
+  const handleInputChange = useCallback(
+    (event) => {
+      onTireCodeBarCodeChange(event.target.value)
+    },
+    [onTireCodeBarCodeChange],
+  )
 
   //UseEffects-------------------------------------------------------------
 
@@ -83,7 +88,7 @@ const TireCodeInputComp = ({ disableInputTireCode, inputRef, tireCodeInput, onTi
           type="text"
           pattern="[0-9]*"
           placeholder="Tire Code..."
-          onChange={(e) => inputChangeHandler(e)}
+          onChange={(e) => handleInputChange(e)}
           value={tireCodeInput}
           maxLength="8"
           disabled={disableInputTireCode}
@@ -99,7 +104,7 @@ TireCodeInputComp.propTypes = {
   specAvlChangeHandler: PropTypes.func,
   tireCodeAvlChangeHandler: PropTypes.func,
   tireCodeInput: PropTypes.number,
-  onTireCodeChange: PropTypes.func,
+  onTireCodeBarCodeChange: PropTypes.func,
   disableInputTireCode: PropTypes.bool,
   onBandBarcodeChange: PropTypes.func,
 }
