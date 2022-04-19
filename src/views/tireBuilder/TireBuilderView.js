@@ -156,7 +156,7 @@ const TireBuilderView = () => {
       SLTLDBConnection.get(`builder/nextsn`).then((res) => {
         setNxtSN(res.data)
       })
-    }, 5000)
+    }, 1200)
     return () => {
       clearInterval(timer)
     }
@@ -172,7 +172,7 @@ const TireBuilderView = () => {
     localStorage.setItem('cr', JSON.stringify(sto))
     const timer = setInterval(async () => {
       //codes are executed every 200ms
-      // dispatch(scaleReading())
+      dispatch(scaleReading())
     }, 200)
     return () => {
       clearInterval(timer)
