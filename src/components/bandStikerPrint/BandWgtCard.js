@@ -122,6 +122,9 @@ const BandWgtModel = ({ selectedBand }) => {
               </Button>
             ) : null}
           </Col>
+          <Button onClick={() => x()} className="btn-lg" variant="warning">
+            Get Print Out
+          </Button>
         </Card.Body>
       </Card>
     </Container>
