@@ -68,13 +68,7 @@ const BandWgtModel = ({ selectedBand }) => {
       currentdate.getMinutes()
 
     // Print the barcode
-    const zpl = `^XA^FO150,1^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(
-      2,
-    )}L^FS^CF0,40^FO180,130^FD ${parseFloat(scaleReading).toFixed(2)} kg^FS
-      ^FS^CF0,40^FO180,180^FD ${datetime}^FS
-
-      ^FS^CF0,60^FO220,220^FD ${band}^FS
-      ^XZ`
+    const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
     const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
     //Error in server
     if (updateBarCode.data.error) {
@@ -134,3 +128,15 @@ BandWgtModel.propTypes = {
   selectedBand: PropTypes.object,
 }
 export default BandWgtModel
+
+/**
+ * 
+ // Print the barcode
+    const zpl = `^XA^FO150,1^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(
+      2,
+    )}L^FS^CF0,40^FO180,130^FD ${parseFloat(scaleReading).toFixed(2)} kg^FS
+      ^FS^CF0,40^FO180,180^FD ${datetime}^FS
+
+      ^FS^CF0,60^FO220,220^FD ${band}^FS
+      ^XZ`
+ */
