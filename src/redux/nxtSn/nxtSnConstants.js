@@ -1,0 +1,1 @@
+export const SET_IS_CHANGED_TRUE = 'SET_IS_CHANGED_TRUE'
