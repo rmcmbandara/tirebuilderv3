@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import { Badge, Button, Col, Dropdown, DropdownButton, Form, Row, Stack } from 'react-bootstrap'
+import { Badge, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../../src/apis/SLTLDBConnection'
 import { notifyError, notifyErrorQk, notifySuccess } from 'src/utils/toastify'
@@ -18,6 +18,7 @@ import { setSpecBandWgt } from 'src/redux/band/bandActions'
 import { useDispatch, useSelector } from 'react-redux'
 import { setActBandWgt } from 'src/redux/band/bandActions'
 import { setSettingWgt, setMinTol, setMaxTol } from 'src/redux/scalStability/stabilityActions'
+import { setisChantedNxtSnTrue } from 'src/redux/nxtSn/nxtSnActions'
 import {
   updateTireCodeAvl,
   updateSpecAvl,
@@ -50,8 +51,10 @@ const TireBuilderView = () => {
   //Disable editing tirecode input and band input
   const [disableInputTireCode, setDisableInputTireCode] = useState(false)
   const [disableInputBand, setDisableInputBand] = useState(false)
+  //nextSN display model states
+  const [show, setShow] = useState(false)
+  const [changedNxtSN, setChangedNxtSN] = useState()
 
-  const [showed, setshowed] = useState(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
   //Refs for TireCode and BandBarcode
   const inputRef = useRef()
   const bandRef = useRef()
@@ -67,12 +70,23 @@ const TireBuilderView = () => {
   const isSrt = useSelector((state) => state.isSrt)
   const tireCodeTxt = useSelector((state) => state.tireCodeText)
   const dataAvlReducer = useSelector((state) => state.dataAvlReducer)
+  const isNxtSnChangeSetTrue = useSelector((state) => state.nxtSnChangeSetTrueReducer)
   //Destructre redux states
   const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
   const { tcAvl, specVerMatch, edc1stTire, specAvl } = dataAvlReducer
 
   /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
+  //Functions to show and hide next SN model
+  const handleChangeSNButtonModel = (e) => {
+    setShow(false)
+    dispatch(setisChantedNxtSnTrue(true))
+  }
+  const handleClose = () => setShow(false)
+  const handleShow = () => {
+    setShow(true)
+    setChangedNxtSN(nxtSN)
+  }
   //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
     setTireCodeInput(val)
@@ -86,6 +100,11 @@ const TireBuilderView = () => {
   const refreshTireCodeInput = () => {
     setTireCodeInput('')
     inputRef.current.focus()
+  }
+
+  //Handle changeSN handler
+  const handleNxtSNChange = (e) => {
+    setChangedNxtSN(e.target.value)
   }
 
   const visibilityAndEditebilitySetter = () => {
@@ -135,7 +154,7 @@ const TireBuilderView = () => {
     }
   }
 
-  //-----------------------------------------------------------------------------
+  //--------------------------ada---------------------------------------------------
   //UseEffects-------------------------
 
   useEffect(() => {
@@ -153,10 +172,13 @@ const TireBuilderView = () => {
   useEffect(() => {
     //Initialize
     const timer = setInterval(async () => {
-      SLTLDBConnection.get(`builder/nextsn`).then((res) => {
-        setNxtSN(res.data)
-      })
-    }, 1200)
+      //if manualy change Serial Number this triggering should not be not happened
+      if (!isNxtSnChangeSetTrue) {
+        SLTLDBConnection.get(`builder/nextsn`).then((res) => {
+          setNxtSN(res.data)
+        })
+      }
+    }, 200)
     return () => {
       clearInterval(timer)
     }
@@ -265,7 +287,6 @@ const TireBuilderView = () => {
       dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
     } else {
       dispatch(resetSpec()) //Reset the spec
-      setshowed(false) //Avoid double time showing toass of "Tire Code එකක් නොමත"
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
       dispatch(setSettingWgt(0)) //Set scale stability setting weing to 0
       dispatch(setMinTol(0)) //Set minimum Tolerance Value 0
@@ -315,15 +336,44 @@ const TireBuilderView = () => {
       <Col sm={3}>
         {showTtlWgtComp && (
           <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-            <TtlWgtDisplayComp bandwgt_for_calculation={bandwgt_for_calculation} nxtSN={nxtSN} />
+            <TtlWgtDisplayComp
+              bandwgt_for_calculation={bandwgt_for_calculation}
+              nxtSN={!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}
+            />
           </div>
         )}
         <div className="col text-center mt-5">
           <h1>
-            <Badge bg="secondary">{nxtSN}</Badge>
+            <Badge bg="info">{!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}</Badge>
           </h1>
+          <Button variant="secondary" onClick={handleShow}>
+            Change SN
+          </Button>
+          {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
         </div>
       </Col>
+      {/* Model for SN Change */}
+      <Modal show={show} onHide={handleClose} backdrop="static">
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="number"
+                autoFocus
+                value={changedNxtSN}
+                onChange={(e) => handleNxtSNChange(e)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={handleChangeSNButtonModel}>
+            Change SN
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Row>
   )
 }

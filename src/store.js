@@ -10,6 +10,7 @@ import { builderFinalReducer } from './redux/builderFinalData/buildFinalReducers
 import { scaleReadingReducer } from './redux/scale/scaleReducers'
 import { srtPobToggleReducer } from './redux/srtpob/srtpobReducers'
 import { bandWgtReducer } from './redux/band/bandReducers'
+import { nxtSnChangeSetTrueReducer } from './redux/nxtSn/nxtSnReducers'
 const initialState = {}
 const reducer = combineReducers({
   stabilityDetails: stabilityReducer,
@@ -22,6 +23,7 @@ const reducer = combineReducers({
   scaleData: scaleReadingReducer,
   isSrt: srtPobToggleReducer,
   bandWgts: bandWgtReducer,
+  nxtSnChangeSetTrueReducer: nxtSnChangeSetTrueReducer,
 })
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(reducer, initialState, composeEnhancer(applyMiddleware(thunk)))
