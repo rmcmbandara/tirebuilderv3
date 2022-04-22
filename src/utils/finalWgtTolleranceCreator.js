@@ -1,26 +1,30 @@
 function getTtlWgtTol(ttlWgt) {
+  /**
+   Here 0.05 is scale density
+   second parameter is lower 
+   */
   let x
   if (parseFloat(ttlWgt) < 7) {
     //Less than 7
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else if (parseFloat(ttlWgt) < 15) {
     // //7-15
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else if (parseFloat(ttlWgt) < 30) {
     //Less than 30
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else if (parseFloat(ttlWgt) < 50) {
     //30 to 50
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else if (parseFloat(ttlWgt) < 70) {
     //Less than 70
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else if (parseFloat(ttlWgt) < 100) {
     //Less than 100
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   } else {
     //Bigger Tires
-    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 2, 3)
+    x = getMaxMinTolTtlWgt(ttlWgt, 0.05, 1, 1)
   }
   const minValue = x.minValue
   const maxValue = x.maxValue
