@@ -21,6 +21,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [inRange, setInRange] = useState(false)
   const [timeOutCountValue, setTimeOutCountValue] = useState(30)
   const [timeOutPercentate, setTimeOutPercentate] = useState(0)
+  //for autoprintout stop for one tire
+  const [isPrinted, setIsPrinted] = useState(false)
   //Redux Selectors-------------------------------------
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
@@ -131,8 +133,9 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //Counter calculations
   useEffect(() => {
     setTimeOutCountValue(STABILITY_WAITING * (1000 / TIMER_INTERVAL))
-    if (inRange && timeOutCountValue < counter) {
-      console.log(timeOutCountValue)
+    if (inRange && timeOutCountValue < counter && isPrinted) {
+      setIsPrinted(true)
+      clickHandler()
     }
 
     const percentage = Number((counter * 100) / timeOutCountValue).toFixed(0)
