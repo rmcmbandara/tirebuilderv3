@@ -239,8 +239,10 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     ^FD${brand} ${swmsg}^FS
     ^FO${PRINT_X + 20},85
     ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-    ^FO${PRINT_X + 35},105
-    ^BY1 ^BCN,120,Y,N,S^FD ${nxtSN}
+    ^FO${PRINT_X + 20},105
+    ^AM,20,10^FD${nxtSN}^FS
+    ^FO${PRINT_X + 35},125
+    ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
     ^XZ
     `
     printerHost
@@ -251,6 +253,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       .catch((e) => {
         notifyError(e)
       })
+    window.location.reload()
   }
   return (
     <Card className="text-center" style={{ minWidth: '600px' }}>
@@ -299,13 +302,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         ) : (
           <></>
         )}
-        <Button
-          className="btn btn-default fs-1 mx-auto "
-          style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-          onClick={clickHandler}
-        >
-          ENTER
-        </Button>
       </Card.Body>
     </Card>
   )
