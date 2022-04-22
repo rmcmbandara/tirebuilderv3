@@ -192,71 +192,51 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       bandid,
     })
       .then((res1) => {
-        console.log('updated temp tires')
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-    //Update Stcok Table---------------------------------------------------------
-    SLTLDBConnection.post(`stk/insert`, {
-      sn,
-      pid,
-      tc,
-    })
-      .then((res1) => {
-        console.log('updated temp tires')
-      })
-      .catch((e) => {
-        notifyError(e)
-      })
-    //Print Out-------------------------------------------------------------------------
-    var currentdate = new Date()
-    var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
-    /*
-    
-        // Print the barcode SN--------
-        let zpl = `^XA^FO${PRINT_X + 20},${PRINT_Y}^BY1 ^BCN,120,Y,N,S^FD ${nxtSN}^XZ`
-        //const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
-    
-        printerHost
-          .put(`/bc`, { zpl, bcprinter: 1 })
-          .then((resPrint) => {
-            console.log('done')
+        //Update Stcok Table---------------------------------------------------------
+        SLTLDBConnection.post(`stk/insert`, {
+          sn,
+          pid,
+          tc,
+        })
+          .then((res1) => {
+            //Print Out-------------------------------------------------------------------------
+            var currentdate = new Date()
+            var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
+            const zpl = `^XA
+        ^FO${PRINT_X + 20},12
+        ^AM,20,10
+        ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
+        ^FO${PRINT_X + 20},38
+        ^AM,20,10
+        ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
+        ^FO${PRINT_X + 20},65
+        ^AM,20,10
+        ^FD${brand} ${swmsg}^FS
+        ^FO${PRINT_X + 20},85
+        ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
+        ^FO${PRINT_X + 20},105
+        ^AM,20,10^FD${nxtSN}^FS
+        ^FO${PRINT_X + 35},125
+        ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
+        ^XZ
+        `
+            printerHost
+              .put(`/bc`, { zpl, bcprinter: 1 })
+              .then((resPrint) => {
+                console.log('done')
+              })
+              .catch((e) => {
+                notifyError(e)
+              })
+            window.location.reload()
           })
           .catch((e) => {
             notifyError(e)
           })
-    */
-    // Print theLabel--------
-
-    //const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
-    const zpl = `^XA
-    ^FO${PRINT_X + 20},12
-    ^AM,20,10
-    ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
-    ^FO${PRINT_X + 20},38
-    ^AM,20,10
-    ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
-    ^FO${PRINT_X + 20},65
-    ^AM,20,10
-    ^FD${brand} ${swmsg}^FS
-    ^FO${PRINT_X + 20},85
-    ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-    ^FO${PRINT_X + 20},105
-    ^AM,20,10^FD${nxtSN}^FS
-    ^FO${PRINT_X + 35},125
-    ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
-    ^XZ
-    `
-    printerHost
-      .put(`/bc`, { zpl, bcprinter: 1 })
-      .then((resPrint) => {
-        console.log('done')
       })
       .catch((e) => {
-        notifyError(e)
+        console.log(e)
       })
-    window.location.reload()
   }
   return (
     <Card className="text-center" style={{ minWidth: '600px' }}>
