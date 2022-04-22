@@ -133,7 +133,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //Counter calculations
   useEffect(() => {
     setTimeOutCountValue(STABILITY_WAITING * (1000 / TIMER_INTERVAL))
-    if (inRange && timeOutCountValue < counter && isPrinted) {
+    if (inRange && timeOutCountValue < counter && !isPrinted) {
       setIsPrinted(true)
       clickHandler()
     }
