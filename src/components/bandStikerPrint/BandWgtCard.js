@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { getBandWgtTol } from 'src/utils/bandWgtTol'
 import { notifyError } from 'src/utils/toastify'
 import printerHost from 'src/apis/printerHost'
+import { PRINT_X, PRINT_Y } from 'src/utils/constants'
 const BandWgtModel = ({ selectedBand }) => {
   //States
   const [backGround, setBackGround] = useState('')
@@ -68,7 +69,10 @@ const BandWgtModel = ({ selectedBand }) => {
       currentdate.getMinutes()
 
     // Print the barcode
-    const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
+    let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS${parseFloat(
+      scaleReading,
+    ).toFixed(2)}L^XZ`
+    //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
     const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
     //Error in server
     if (updateBarCode.data.error) {
