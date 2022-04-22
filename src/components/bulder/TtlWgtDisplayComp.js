@@ -8,8 +8,9 @@ import { getTtlWgtTol } from '../../utils/finalWgtTolleranceCreator'
 import { setMaxTol, setMinTol } from '../../redux/scalStability/stabilityActions'
 import { propTypes } from 'react-bootstrap/esm/Image'
 import PropTypes from 'prop-types'
-import { notifySuccess, notifySuccessQk } from 'src/utils/toastify'
-import { STABILITY_WAITING, TIMER_INTERVAL } from 'src/utils/constants'
+import { notifyError, notifySuccess, notifySuccessQk } from 'src/utils/toastify'
+import { PRINT_X, PRINT_Y, STABILITY_WAITING, TIMER_INTERVAL } from 'src/utils/constants'
+import printerHost from 'src/apis/printerHost'
 const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -35,7 +36,16 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
   const specAvl = dataAvl?.specAvl
   //------------------------------------------------------------
-  //UseEffect for stability
+  //Destructer tire Detail
+  const tiresizebasic = tireCodeDetail?.data?.data?.data[0]?.tiresizebasic
+  const config = tireCodeDetail?.data?.data?.data[0]?.config
+  const lugtypecap = tireCodeDetail?.data?.data?.data[0]?.lugtypecap
+  const swmsg = tireCodeDetail?.data?.data?.data[0]?.swmsg
+  const brand = tireCodeDetail?.data?.data?.data[0]?.brand
+  const rimsize = tireCodeDetail?.data?.data?.data[0]?.rimsize
+  const tiretypecap = tireCodeDetail?.data?.data?.data[0]?.tiretypecap
+  const color = tireCodeDetail?.data?.data?.data[0]?.color
+  const moldno = tireCodeDetail?.data?.data?.data[0]?.moldno
 
   //UseEffect for scale reading detection
   useEffect(() => {
@@ -194,13 +204,53 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         console.log('updated temp tires')
       })
       .catch((e) => {
-        console.log(e)
+        notifyError(e)
       })
-    if (isSrt) {
-      console.log(specDetail.data.data.spec.bvol)
-    } else {
-      notifySuccess('POB')
-    }
+    //Print Out-------------------------------------------------------------------------
+    var currentdate = new Date()
+    var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
+    /*
+    
+        // Print the barcode SN--------
+        let zpl = `^XA^FO${PRINT_X + 20},${PRINT_Y}^BY1 ^BCN,120,Y,N,S^FD ${nxtSN}^XZ`
+        //const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
+    
+        printerHost
+          .put(`/bc`, { zpl, bcprinter: 1 })
+          .then((resPrint) => {
+            console.log('done')
+          })
+          .catch((e) => {
+            notifyError(e)
+          })
+    */
+    // Print theLabel--------
+
+    //const zpl = `^XA^FO300,3^BY2 ^BCN,120,Y,N,S^FD S${parseFloat(scaleReading).toFixed(2)}L^XZ`
+    const zpl = `^XA
+    ^FO${PRINT_X + 20},12
+    ^AM,20,10
+    ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
+    ^FO${PRINT_X + 20},38
+    ^AM,20,10
+    ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
+    ^FO${PRINT_X + 20},65
+    ^AM,20,10
+    ^FD${brand} ${swmsg}^FS
+    ^FO${PRINT_X + 20},85
+    ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
+    ^FO${PRINT_X + 35},105
+    ^BY1 ^BCN,120,Y,N,S^FD ${nxtSN}
+    ^XZ
+    `
+    printerHost
+      .put(`/bc`, { zpl, bcprinter: 1 })
+      .then((resPrint) => {
+        console.log('done')
+      })
+      .catch((e) => {
+        notifyError(e)
+      })
   }
   return (
     <Card className="text-center" style={{ minWidth: '600px' }}>
@@ -249,6 +299,13 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         ) : (
           <></>
         )}
+        <Button
+          className="btn btn-default fs-1 mx-auto "
+          style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
+          onClick={clickHandler}
+        >
+          ENTER
+        </Button>
       </Card.Body>
     </Card>
   )
