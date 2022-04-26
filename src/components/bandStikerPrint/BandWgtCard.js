@@ -69,7 +69,7 @@ const BandWgtModel = ({ selectedBand }) => {
       currentdate.getMinutes()
 
     // Print the barcode
-    let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS${parseFloat(
+    let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FDS${parseFloat(
       scaleReading,
     ).toFixed(2)}L^XZ`
     //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
