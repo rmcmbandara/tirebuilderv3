@@ -89,9 +89,10 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           const bandWgtDiff = parseFloat(bandwgtSpec) - parseFloat(bandwgt_for_calculation)
           const trWgtAdj = bandWgtDiff * 0.143
 
-          //Ammend the last ekement
-
-          wgtLst[wgtLst.length - 1].wgt = parseFloat(lastelementWgt) + parseFloat(trWgtAdj)
+          //Ammend the last ekement POB Tires But Not for APW Tires
+          if (config != 'APW') {
+            wgtLst[wgtLst.length - 1].wgt = parseFloat(lastelementWgt) + parseFloat(trWgtAdj)
+          }
         }
       }
       if (wgtLst?.length > 0 && wgtLst) {
