@@ -224,12 +224,18 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
             printerHost
               .put(`/bc`, { zpl, bcprinter: 1 })
               .then((resPrint) => {
-                console.log('done')
+                SLTLDBConnection.put(`spec/edc1sttireset_1`, { edc1sttire: 1, specid })
+                  .then((resPrint) => {
+                    window.location.reload()
+                  })
+                  .catch((e) => {
+                    console.log(e.Error)
+                    notifyError(e)
+                  })
               })
               .catch((e) => {
                 notifyError(e)
               })
-            window.location.reload()
           })
           .catch((e) => {
             notifyError(e)
@@ -286,6 +292,13 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         ) : (
           <></>
         )}
+        <Button
+          className="btn btn-default fs-1 mx-auto "
+          style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
+          onClick={clickHandler}
+        >
+          ENTER
+        </Button>
       </Card.Body>
     </Card>
   )
