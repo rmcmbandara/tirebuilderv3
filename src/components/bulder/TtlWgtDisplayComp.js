@@ -27,16 +27,15 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const specDetail = useSelector((state) => state.specDetails)
   const tireCodeDetail = useSelector((state) => state.tireCodeDetails)
   const bandWgts = useSelector((state) => state.bandWgts)
-  const dataAvl = useSelector((state) => state.dataAvlReducer)
   const { settingWgt, maxTol, minTol } = useSelector((state) => state.stabilityDetails)
   const { actBandWgt, specBandWgt } = useSelector((state) => state.bandWgts)
   const isSrt = useSelector((state) => state.isSrt)
   const scale = useSelector((state) => state.scaleData)
   const dispatch = useDispatch()
   const tireCodeTxt = useSelector((state) => state.tireCodeText)
+  const dataAvlReducer = useSelector((state) => state.dataAvlReducer)
   //Variable Decalrations
   const [wgtLst, setWgtLst] = useState([]) //Compound Detail List
-  const specAvl = dataAvl?.specAvl
   //------------------------------------------------------------
   //Destructer tire Detail
   const tiresizebasic = tireCodeDetail?.data?.data?.data[0]?.tiresizebasic
@@ -48,6 +47,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const tiretypecap = tireCodeDetail?.data?.data?.data[0]?.tiretypecap
   const color = tireCodeDetail?.data?.data?.data[0]?.color
   const moldno = tireCodeDetail?.data?.data?.data[0]?.moldno
+  //Destructure
+  const { tcAvl, specVerMatch, edc1stTire, specAvl } = dataAvlReducer
 
   //UseEffect for scale reading detection
   useEffect(() => {
@@ -224,14 +225,18 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
             printerHost
               .put(`/bc`, { zpl, bcprinter: 1 })
               .then((resPrint) => {
-                SLTLDBConnection.put(`spec/edc1sttireset_1`, { edc1sttire: 1, specid })
-                  .then((resPrint) => {
-                    window.location.reload()
-                  })
-                  .catch((e) => {
-                    console.log(e.Error)
-                    notifyError(e)
-                  })
+                if (edc1stTire == 0) {
+                  SLTLDBConnection.put(`spec/edc1sttireset_1`, { edc1sttire: 1, specid })
+                    .then((resPrint) => {
+                      window.location.reload()
+                    })
+                    .catch((e) => {
+                      console.log(e.Error)
+                      notifyError(e)
+                    })
+                } else {
+                  window.location.reload()
+                }
               })
               .catch((e) => {
                 notifyError(e)
@@ -292,13 +297,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         ) : (
           <></>
         )}
-        <Button
-          className="btn btn-default fs-1 mx-auto "
-          style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-          onClick={clickHandler}
-        >
-          ENTER
-        </Button>
       </Card.Body>
     </Card>
   )
