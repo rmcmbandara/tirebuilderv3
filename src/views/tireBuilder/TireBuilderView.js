@@ -95,8 +95,8 @@ const TireBuilderView = () => {
   const handleClosePressEnter = () => setShowPressEnter(false)
   const handleShowPressEnter = () => setShowPressEnter(true)
 
-  const showPressEnterRemotely = () => {
-    setShowPressEnter(true)
+  const showPressEnterRemotely = (val) => {
+    setShowPressEnter(val)
   }
   //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
@@ -151,6 +151,8 @@ const TireBuilderView = () => {
                       return
                   }
                 }
+                //Show PressNo Enter model
+                showPressEnterRemotely(true)
               } else {
                 //Spec version is not OK
               }
@@ -162,11 +164,16 @@ const TireBuilderView = () => {
         refreshTireCodeInput()
         notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
         notifyError(specDetail?.data?.data?.spec?.specversion.toString())
+
+        //Hide PressNo Enter model
+        showPressEnterRemotely(false)
       }
     } else if (edc1stTire == 1) {
       //EDC 1st Tire
       refreshTireCodeInput()
       notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
+      //Hide PressNo Enter model
+      showPressEnterRemotely(false)
     }
   }
 
@@ -318,7 +325,7 @@ const TireBuilderView = () => {
   }, [tireCodeTxt])
   //useEffect for pressNo Enter
   useEffect(() => {
-    if ((pressNo.length == 6) & (pressNo.charAt(0) == 'p') || pressNo.charAt(0) == 'P') {
+    if ((pressNo.length == 5) & (pressNo.charAt(0) == 'p') || pressNo.charAt(0) == 'P') {
       setShowPressEnter(false)
     }
   }, [pressNo])
@@ -346,6 +353,9 @@ const TireBuilderView = () => {
           <Button variant="warning" onClick={handleClickRefresh}>
             Refresh
           </Button>
+          <h1>
+            <Badge bg="success">{pressNo}</Badge>
+          </h1>
         </div>
         {showBandInputComp && (
           <BandWgtScanComp
@@ -403,7 +413,7 @@ const TireBuilderView = () => {
       --------------Model 2
       */}
       <Modal show={showPressEnter} onHide={handleClosePressEnter} backdrop="static">
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>ප්‍රෙස් නොම්බරය</Modal.Title>
         </Modal.Header>
         <Modal.Body>

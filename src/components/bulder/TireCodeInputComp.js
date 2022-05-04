@@ -60,6 +60,8 @@ const TireCodeInputComp = ({
     ) {
       //No tireCode
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
+      //Hide PressNo Enter model
+      showPressEnterRemotely(false)
       return notifyWarningQk('Tire Code එකක් නොමැත')
     }
     //TireCode is available
@@ -77,8 +79,6 @@ const TireCodeInputComp = ({
       if (bandwgtSpec) {
         dispatch(setSpecBandWgt(bandwgtSpec))
       }
-      //Show PressNo Enter model
-      showPressEnterRemotely()
     }
   }, [tireCodeDetail])
 
