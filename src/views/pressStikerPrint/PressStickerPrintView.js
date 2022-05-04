@@ -49,7 +49,7 @@ const PressStickerPrintView = () => {
         return notifyError('Not Inserted in temp barcode table')
       }
     } else {
-      notifyError('Not a valid press no')
+      notifyError('Not a valid press nos')
       setValue('p-')
     }
   }
