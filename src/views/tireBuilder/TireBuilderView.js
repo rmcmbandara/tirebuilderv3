@@ -91,10 +91,13 @@ const TireBuilderView = () => {
     setShowSNChange(true)
     setChangedNxtSN(nxtSN)
   }
-
   //Functions to show and hide Press Enter Modle
   const handleClosePressEnter = () => setShowPressEnter(false)
   const handleShowPressEnter = () => setShowPressEnter(true)
+
+  const showPressEnterRemotely = () => {
+    setShowPressEnter(true)
+  }
   //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
     setTireCodeInput(val)
@@ -337,6 +340,7 @@ const TireBuilderView = () => {
           disableInputTireCode={disableInputTireCode}
           onBandBarcodeChange={setBandBarCodeInputFun}
           onTireCodeBarCodeChange={setTirecodeInputFun}
+          showPressEnterRemotely={showPressEnterRemotely}
         />
         <div className="m-3">
           <Button variant="warning" onClick={handleClickRefresh}>

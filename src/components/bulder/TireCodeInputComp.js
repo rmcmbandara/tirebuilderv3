@@ -21,6 +21,7 @@ const TireCodeInputComp = ({
   inputRef,
   tireCodeInput,
   onTireCodeBarCodeChange,
+  showPressEnterRemotely,
 }) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
@@ -76,6 +77,8 @@ const TireCodeInputComp = ({
       if (bandwgtSpec) {
         dispatch(setSpecBandWgt(bandwgtSpec))
       }
+      //Show PressNo Enter model
+      showPressEnterRemotely()
     }
   }, [tireCodeDetail])
 
@@ -107,5 +110,6 @@ TireCodeInputComp.propTypes = {
   onTireCodeBarCodeChange: PropTypes.func,
   disableInputTireCode: PropTypes.bool,
   onBandBarcodeChange: PropTypes.func,
+  showPressEnterRemotely: PropTypes.func,
 }
 export default TireCodeInputComp
