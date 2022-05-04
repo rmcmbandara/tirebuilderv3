@@ -37,7 +37,7 @@ const PressStickerPrintView = () => {
     const upperCaseInclude = pressNoArr.includes(value.toUpperCase())
     if (lowerCaseInclude || upperCaseInclude) {
       // Print the barcode
-      let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FDS${value}L^XZ`
+      let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FD${value}^XZ`
       //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
       const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
       //Error in server
