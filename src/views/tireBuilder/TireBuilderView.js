@@ -52,8 +52,12 @@ const TireBuilderView = () => {
   const [disableInputTireCode, setDisableInputTireCode] = useState(false)
   const [disableInputBand, setDisableInputBand] = useState(false)
   //nextSN display model states
-  const [show, setShow] = useState(false)
+  const [showSNChange, setShowSNChange] = useState(false)
   const [changedNxtSN, setChangedNxtSN] = useState()
+
+  //PressNo enter model States
+  const [showPressEnter, setShowPressEnter] = useState(false)
+  const [pressNo, setPressNo] = useState('')
 
   //Refs for TireCode and BandBarcode
   const inputRef = useRef()
@@ -79,14 +83,18 @@ const TireBuilderView = () => {
   //Handlers and Methods-------------------------
   //Functions to show and hide next SN model
   const handleChangeSNButtonModel = (e) => {
-    setShow(false)
+    setShowSNChange(false)
     dispatch(setisChantedNxtSnTrue(true))
   }
-  const handleClose = () => setShow(false)
-  const handleShow = () => {
-    setShow(true)
+  const handleCloseSNChange = () => setShowSNChange(false)
+  const handleShowSNChange = () => {
+    setShowSNChange(true)
     setChangedNxtSN(nxtSN)
   }
+
+  //Functions to show and hide Press Enter Modle
+  const handleClosePressEnter = () => setShowPressEnter(false)
+  const handleShowPressEnter = () => setShowPressEnter(true)
   //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
     setTireCodeInput(val)
@@ -105,6 +113,11 @@ const TireBuilderView = () => {
   //Handle changeSN handler
   const handleNxtSNChange = (e) => {
     setChangedNxtSN(e.target.value)
+  }
+
+  //handleNxtSNChange handler
+  const handlePressNoEnter = (e) => {
+    setPressNo(e.target.value)
   }
 
   const visibilityAndEditebilitySetter = () => {
@@ -285,6 +298,7 @@ const TireBuilderView = () => {
   useEffect(() => {
     if (tireCodeTxt?.data?.length === 8) {
       dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
+      setShowPressEnter(true)
     } else {
       dispatch(resetSpec()) //Reset the spec
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
@@ -299,6 +313,12 @@ const TireBuilderView = () => {
       dispatch(setSpecBandWgt(null))
     }
   }, [tireCodeTxt])
+  //useEffect for pressNo Enter
+  useEffect(() => {
+    if ((pressNo.length == 6) & (pressNo.charAt(0) == 'p') || pressNo.charAt(0) == 'P') {
+      setShowPressEnter(false)
+    }
+  }, [pressNo])
 
   const handleClickRefresh = () => {
     inputRef.current.focus()
@@ -346,20 +366,21 @@ const TireBuilderView = () => {
           <h1>
             <Badge bg="info">{!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}</Badge>
           </h1>
-          <Button variant="secondary" onClick={handleShow}>
+          <Button variant="secondary" onClick={handleShowSNChange}>
             Change SN
           </Button>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
         </div>
       </Col>
       {/* Model for SN Change */}
-      <Modal show={show} onHide={handleClose} backdrop="static">
+      <Modal show={showSNChange} onHide={handleCloseSNChange} backdrop="static">
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Email address</Form.Label>
+              <Form.Label>New Serial Number</Form.Label>
               <Form.Control
+                className="mb-3 fs-1"
                 type="number"
                 autoFocus
                 value={changedNxtSN}
@@ -373,6 +394,27 @@ const TireBuilderView = () => {
             Change SN
           </Button>
         </Modal.Footer>
+      </Modal>
+      {/* 
+      --------------Model 2
+      */}
+      <Modal show={showPressEnter} onHide={handleClosePressEnter} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>ප්‍රෙස් නොම්බරය</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3 fs-1" controlId="exampleForm.ControlInput1">
+              <Form.Control
+                className="mb-3 fs-1"
+                type="text"
+                autoFocus
+                value={pressNo}
+                onChange={(e) => handlePressNoEnter(e)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
       </Modal>
     </Row>
   )
