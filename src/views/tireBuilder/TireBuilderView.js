@@ -325,7 +325,7 @@ const TireBuilderView = () => {
   }, [tireCodeTxt])
   //useEffect for pressNo Enter
   useEffect(() => {
-    if ((pressNo.length == 5) & (pressNo.charAt(0) == 'p') || pressNo.charAt(0) == 'P') {
+    if ((pressNo.length == 6) & (pressNo.charAt(0) == 'p') || pressNo.charAt(0) == 'P') {
       setShowPressEnter(false)
     }
   }, [pressNo])
