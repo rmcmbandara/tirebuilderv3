@@ -94,7 +94,7 @@ const SpecDisplayComp = () => {
           ) : (
             <Card bg={'danger'} className="mb-5" text={'white'} style={{ width: '18rem' }}>
               <Card.Body>
-                <Card.Title>Spec නැත</Card.Title>
+                <Card.Title>Loading........</Card.Title>
               </Card.Body>
             </Card>
           )
