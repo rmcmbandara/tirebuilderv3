@@ -308,7 +308,7 @@ const TireBuilderView = () => {
   useEffect(() => {
     if (tireCodeTxt?.data?.length === 8) {
       dispatch(setTireCodeDetail(tireCodeInput.substring(0, 5)))
-      setShowPressEnter(true)
+      //setShowPressEnter(true)
     } else {
       dispatch(resetSpec()) //Reset the spec
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
