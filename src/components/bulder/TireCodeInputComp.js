@@ -21,6 +21,7 @@ const TireCodeInputComp = ({
   inputRef,
   tireCodeInput,
   onTireCodeBarCodeChange,
+  showPressEnterRemotely,
 }) => {
   //States-------------------------------------------------------------------
   const [showed, setshowed] = useState(false)
@@ -59,6 +60,8 @@ const TireCodeInputComp = ({
     ) {
       //No tireCode
       dispatch(updateTireCodeAvl(false)) //Send tireCodeAvl Detail to Perent
+      //Hide PressNo Enter model
+      showPressEnterRemotely(false)
       return notifyWarningQk('Tire Code එකක් නොමැත')
     }
     //TireCode is available
@@ -107,5 +110,6 @@ TireCodeInputComp.propTypes = {
   onTireCodeBarCodeChange: PropTypes.func,
   disableInputTireCode: PropTypes.bool,
   onBandBarcodeChange: PropTypes.func,
+  showPressEnterRemotely: PropTypes.func,
 }
 export default TireCodeInputComp
