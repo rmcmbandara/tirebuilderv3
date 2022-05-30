@@ -1,0 +1,28 @@
+CREATE TABLE mfg.builder_temp
+(
+    sn integer,
+    tirecode integer,
+    sver integer,
+    bvol integer,
+    cvol integer,
+    trvol integer,
+    bsg numeric,
+    csg numeric,
+    trsg numeric,
+    bonwgt numeric,
+    actwgt numeric,
+    bcode integer,
+    ccode integer,
+    trcode integer,
+    specid integer,
+    stdbandwgt numeric,
+    actbandwgt numeric,
+    bandid integer,
+    tc integer,
+    pid integer,
+    zpl character varying(5000),
+    PRIMARY KEY (sn)
+);
+
+ALTER TABLE IF EXISTS mfg.builder_temp
+    OWNER to postgres;
