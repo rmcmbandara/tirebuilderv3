@@ -153,7 +153,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //-------------------------------------------------------------------------------------
   //Functions and Hanlers
   //************************************************************************************ */
-  const clickHandler2 = () => {
+  const clickHandler= () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
     const tc = tirecode //for stock.stk table
@@ -228,7 +228,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       })
   }
   //----------------------------------------------------------
-  const clickHandler = () => {
+  const clickHandler2 = () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
     const tc = tirecode //for stock.stk table
