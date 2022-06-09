@@ -26,3 +26,70 @@ CREATE TABLE mfg.builder_temp
 
 ALTER TABLE IF EXISTS mfg.builder_temp
     OWNER to postgres;
+
+
+//Triggers------------------------
+    CREATE OR REPLACE FUNCTION mfg.insert_mfg_builder()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+BEGIN
+
+		 INSERT INTO mfg.builder(
+		  sn,
+      tirecode,
+      sver,
+      bvol,
+      cvol,
+      trvol,
+      bsg,
+      csg,
+      trsg,
+      bonwgt,
+      actwgt,
+      bcode,
+      ccode,
+      trcode,
+      specid,
+      stdbandwgt,
+      actbandwgt,
+      bandid
+		 )
+		 VALUES(
+		  NEW.sn,
+ NEW.tirecode,
+ NEW.sver,
+ NEW.bvol,
+ NEW.cvol,
+ NEW.trvol,
+ NEW.bsg,
+ NEW.csg,
+ NEW.trsg,
+ NEW.bonwgt,
+ NEW.actwgt,
+ NEW.bcode,
+ NEW.ccode,
+ NEW.trcode,
+ NEW.specid,
+ NEW.stdbandwgt,
+ NEW.actbandwgt,
+ NEW.bandid
+		 );
+INSERT INTO stock.stk(sn,tc,pid) 
+VALUES(NEW.sn,NEW.tc,NEW.pid);
+
+
+	RETURN NEW;
+END;
+$$
+
+
+
+CREATE TRIGGER trgger_insert_mfg_builder
+  BEFORE INSERT
+  ON mfg.builder_temp
+  FOR EACH ROW
+  EXECUTE PROCEDURE mfg.insert_mfg_builder();
+  
+  

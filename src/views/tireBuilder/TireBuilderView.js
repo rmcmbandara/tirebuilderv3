@@ -58,6 +58,9 @@ const TireBuilderView = () => {
   const [showPressEnter, setShowPressEnter] = useState(false)
   const [pressNo, setPressNo] = useState('')
 
+  //SN available in stock Table
+  const [isSnAvlinStockTbl, setisSnAvlinStockTbl] = useState(false)
+
   //Refs for TireCode and BandBarcode
   const inputRef = useRef()
   const bandRef = useRef()
@@ -84,6 +87,19 @@ const TireBuilderView = () => {
   const handleChangeSNButtonModel = (e) => {
     setShowSNChange(false)
     dispatch(setisChantedNxtSnTrue(true))
+    SLTLDBConnection.get(`stk/getsnavl/${changedNxtSN}`)
+      .then((res) => {
+        if (res.data.data.rowCount != 0) {
+          setShowSNChange(true)
+          dispatch(setisChantedNxtSnTrue(false))
+          notifyError('මෙම SNය ටයර් ස්ටෝරුවේ ඇත')
+        } else {
+          setShowSNChange(false)
+          dispatch(setisChantedNxtSnTrue(true))
+          setisSnAvlinStockTbl(false)
+        }
+      })
+      .catch((e) => console.log(e.message))
   }
   const handleCloseSNChange = () => setShowSNChange(false)
   const handleShowSNChange = () => {
@@ -205,6 +221,17 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
+  useEffect(() => {
+    SLTLDBConnection.get(`stk/getsnavl/${nxtSN}`)
+      .then((res) => {
+        if (res.data.data.rowCount != 0) {
+          setisSnAvlinStockTbl(true)
+        } else {
+          setisSnAvlinStockTbl(false)
+        }
+      })
+      .catch((e) => console.log(e.message))
+  }, [nxtSN])
 
   //Scale Reading------------------------------------------------------------------
   const scale = useSelector((state) => state.scaleData)
@@ -378,6 +405,9 @@ const TireBuilderView = () => {
         <div className="col text-center mt-5">
           <h1>
             <Badge bg="info">{!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}</Badge>
+          </h1>
+          <h1>
+            <Badge bg="info">{isSnAvlinStockTbl ? 'මෙම SMය පෙර භාවිත කර ඇත' : ''}</Badge>
           </h1>
           <Button variant="secondary" onClick={handleShowSNChange}>
             Change SN
