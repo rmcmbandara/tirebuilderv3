@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import { notifyError, notifySuccess, notifySuccessQk } from 'src/utils/toastify'
 import { PRINT_X, PRINT_Y, STABILITY_WAITING, TIMER_INTERVAL } from 'src/utils/constants'
 import printerHost from 'src/apis/printerHost'
+import axios from 'axios'
 const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //States--------------------------------------------
   const [specDetailObj, setSpecDetailObj] = useState({})
@@ -151,6 +152,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   }, [counter])
   //-------------------------------------------------------------------------------------
   //Functions and Hanlers
+  //************************************************************************************ */
   const clickHandler2 = () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
@@ -172,30 +174,60 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     const stdbandwgt = bandWgts?.specBandWgt
     const actbandwgt = bandWgts?.actBandWgt
     const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
-    //ZPL
-    var currentdate = new Date()
-    var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
-    const zpl = `^XA
-^FO${PRINT_X + 20},12
-^AM,20,10
-^FD${tiresizebasic} ${config} ${lugtypecap}^FS
-^FO${PRINT_X + 20},38
-^AM,20,10
-^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
-^FO${PRINT_X + 20},65
-^AM,20,10
-^FD${brand} ${swmsg}^FS
-^FO${PRINT_X + 20},85
-^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-^FO${PRINT_X + 20},105
-^AM,20,10^FD${nxtSN}^FS
-^FO${PRINT_X + 35},125
-^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
-^XZ
-`
-    notifyError('fuck')
+    //Insert builder table
+    SLTLDBConnection.post(`builder_temp/insertsn`, {
+      sn,
+      tirecode,
+      sver,
+      bvol,
+      cvol,
+      trvol,
+      bsg,
+      csg,
+      trsg,
+      bonwgt,
+      actwgt,
+      bcode,
+      ccode,
+      trcode,
+      specid,
+      stdbandwgt,
+      actbandwgt,
+      bandid,
+      tc,
+      pid,
+    })
+      .then((res1) => {
+        //Print Out-------------------------------------------------------------------------
+        var currentdate = new Date()
+        var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
+        const zpl = `^XA
+   ^FO${PRINT_X + 20},12
+   ^AM,20,10
+   ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
+   ^FO${PRINT_X + 20},38
+   ^AM,20,10
+   ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
+   ^FO${PRINT_X + 20},65
+   ^AM,20,10
+   ^FD${brand} ${swmsg}^FS
+   ^FO${PRINT_X + 20},85
+   ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
+   ^FO${PRINT_X + 20},105
+   ^AM,20,10^FD${nxtSN}^FS
+   ^FO${PRINT_X + 35},125
+   ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
+   ^XZ
+   `
+        printerHost.put(`/bc`, { zpl, bcprinter: 1 })
+      })
+      .catch((e) => {
+        if (e.message == 'Request failed with status code 409')
+          notifyError('මීට පෙර බිල්ඩ් කරන ලද ටයරකි')
+        notifyError(e.message)
+      })
   }
-
+  //----------------------------------------------------------
   const clickHandler = () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
@@ -237,6 +269,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       stdbandwgt,
       actbandwgt,
       bandid,
+      tc,
+      pid,
     })
       .then((res1) => {
         //Update Stcok Table---------------------------------------------------------
