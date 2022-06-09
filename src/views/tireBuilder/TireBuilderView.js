@@ -33,6 +33,9 @@ import StabilitySetterComp from 'src/components/StabilitySetterComp'
 import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
 import { getBandWgtTol } from 'src/utils/bandWgtTol'
 import CountDownTmer from 'src/components/bulder/CountDownTmer'
+
+import { PRINT_X, PRINT_Y } from 'src/utils/constants'
+import printerHost from 'src/apis/printerHost'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //Inputs for tireCode and BandBarcode
@@ -361,6 +364,14 @@ const TireBuilderView = () => {
     window.location.reload()
     setTireCodeInput('')
   }
+  const bandSticker = async () => {
+    // Print the barcode
+    let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FDS${parseFloat(
+      scaleReading,
+    ).toFixed(2)}L^XZ`
+    //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
+    const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
+  }
   return (
     <Row>
       <Col sm={3}>
@@ -413,6 +424,11 @@ const TireBuilderView = () => {
             Change SN
           </Button>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
+        </div>
+        <div className="col text-center mt-5">
+          <Button variant="danger" onClick={bandSticker}>
+            Band Sticker
+          </Button>
         </div>
       </Col>
       {/* Model for SN Change */}
