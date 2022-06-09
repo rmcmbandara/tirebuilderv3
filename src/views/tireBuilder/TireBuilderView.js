@@ -67,6 +67,9 @@ const TireBuilderView = () => {
   //Refs for TireCode and BandBarcode
   const inputRef = useRef()
   const bandRef = useRef()
+
+  //Scale
+  const [scaleReadingBand, setScaleReadingBand] = useState(0)
   ///////////////////////////////
 
   //Redux-------------------------------------
@@ -252,6 +255,13 @@ const TireBuilderView = () => {
       clearInterval(timer)
     }
   }, [])
+
+  //Scale Reading
+  useEffect(() => {
+    if (scale.reading !== undefined) {
+      setScaleReadingBand(scale.reading.reading.wgtReading)
+    }
+  }, [scale])
   //------------------------------------------------------------------
   //UseEffect to show or hide band barcode input text
   /*
@@ -367,7 +377,7 @@ const TireBuilderView = () => {
   const bandSticker = async () => {
     // Print the barcode
     let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FDS${parseFloat(
-      scaleReading,
+      scaleReadingBand,
     ).toFixed(2)}L^XZ`
     //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
     const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
