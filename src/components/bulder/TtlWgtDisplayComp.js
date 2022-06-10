@@ -22,6 +22,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const [inRange, setInRange] = useState(false)
   const [timeOutCountValue, setTimeOutCountValue] = useState(30)
   const [timeOutPercentate, setTimeOutPercentate] = useState(0)
+
+  const [edc1sttire, setEdc1sttire] = useState()
   //for autoprintout stop for one tire
   const [isPrinted, setIsPrinted] = useState(false)
   //Redux Selectors-------------------------------------
@@ -50,7 +52,10 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   const moldno = tireCodeDetail?.data?.data?.data[0]?.moldno
   //Destructure
   const { tcAvl, specVerMatch, edc1stTire, specAvl } = dataAvlReducer
-
+  //EDC 1st Tire
+  useEffect(() => {
+    setEdc1sttire(edc1stTire)
+  }, [edc1stTire])
   //UseEffect for scale reading detection
   useEffect(() => {
     if (scale?.reading?.reading) {
@@ -174,6 +179,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     const stdbandwgt = bandWgts?.specBandWgt
     const actbandwgt = bandWgts?.actBandWgt
     const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
+    notifyError(edc1sttire)
     //Insert builder table
     SLTLDBConnection.post(`builder_temp/insertsn`, {
       sn,
@@ -196,6 +202,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       bandid,
       tc,
       pid,
+      edc1sttire,
     })
       .then((res1) => {
         //Print Out-------------------------------------------------------------------------
@@ -376,7 +383,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         ) : (
           <></>
         )}
-        <Button onClick={clickHandler2}>Enter</Button>
+        <Button onClick={clickHandler}>Enter</Button>
       </Card.Body>
     </Card>
   )

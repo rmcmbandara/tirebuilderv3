@@ -27,17 +27,24 @@ CREATE TABLE mfg.builder_temp
 ALTER TABLE IF EXISTS mfg.builder_temp
     OWNER to postgres;
 
+    ALTER TABLE IF EXISTS mfg.builder_temp
+    ADD COLUMN edc1sttire integer;
+
 
 //Triggers------------------------
-    CREATE OR REPLACE FUNCTION mfg.insert_mfg_builder()
-  RETURNS TRIGGER 
-  LANGUAGE PLPGSQL
-  AS
+     CREATE OR REPLACE FUNCTION mfg.insert_mfg_builder()
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+   AS
 $$
-BEGIN
 
-		 INSERT INTO mfg.builder(
-		  sn,
+BEGIN
+IF NEW.edc1sttire=2 THEN
+		update srtspec.spec set edc1sttire=9 where specid = NEW.specid;
+END IF;
+
+INSERT INTO mfg.builder(
+	  sn,
       tirecode,
       sver,
       bvol,
@@ -57,7 +64,7 @@ BEGIN
       bandid
 		 )
 		 VALUES(
-		  NEW.sn,
+ NEW.sn,
  NEW.tirecode,
  NEW.sver,
  NEW.bvol,
@@ -74,16 +81,16 @@ BEGIN
  NEW.specid,
  NEW.stdbandwgt,
  NEW.actbandwgt,
- NEW.bandid
-		 );
+ NEW.bandid);
+ 
 INSERT INTO stock.stk(sn,tc,pid) 
 VALUES(NEW.sn,NEW.tc,NEW.pid);
+
 
 
 	RETURN NEW;
 END;
 $$
-
 
 
 CREATE TRIGGER trgger_insert_mfg_builder

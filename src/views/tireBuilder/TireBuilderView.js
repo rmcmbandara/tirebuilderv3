@@ -430,15 +430,15 @@ const TireBuilderView = () => {
           <h1>
             <Badge bg="info">{isSnAvlinStockTbl ? 'මෙම SMය පෙර භාවිත කර ඇත' : ''}</Badge>
           </h1>
-          <Button variant="secondary" onClick={handleShowSNChange}>
-            Change SN
-          </Button>
+          <div className="col text-center mt-5">
+            <Button variant="secondary" onClick={handleShowSNChange}>
+              Change SN
+            </Button>
+            <Button className="m-3" variant="danger" onClick={bandSticker}>
+              Band Sticker
+            </Button>
+          </div>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
-        </div>
-        <div className="col text-center mt-5">
-          <Button variant="danger" onClick={bandSticker}>
-            Band Sticker
-          </Button>
         </div>
       </Col>
       {/* Model for SN Change */}
