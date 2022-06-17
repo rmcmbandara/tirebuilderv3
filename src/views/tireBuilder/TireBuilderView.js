@@ -145,6 +145,8 @@ const TireBuilderView = () => {
   }
 
   const visibilityAndEditebilitySetter = () => {
+    console.log('Enterd1')
+    console.log('Edc1st Tire ' + edc1stTire)
     if (edc1stTire == 0 || edc1stTire == 2) {
       if (specVerMatch) {
         if (specAvl) {
@@ -156,6 +158,7 @@ const TireBuilderView = () => {
                 if (res.data && res.data.rows[0]) {
                   switch (res.data.rows[0].tcat) {
                     case 1: //SRTTire
+                      console.log('Enterd SRT')
                       setShowTtlWgtComp(true)
                       setShowBandInputComp(false)
                       setDisableInputTireCode(true)
@@ -285,8 +288,10 @@ const TireBuilderView = () => {
       dispatch(updateEdc1StTire(edc1stTirefrmDB))
       //Send specVerMach info to perent base on Spec Avilability
       if (specVerInput === specVerDB) {
+        console.log('Spec Ver Matched')
         dispatch(updateSpecVerMach(true))
       } else {
+        notifyError('පැරණි කාඩ් එකකි.')
         dispatch(updateSpecVerMach(false))
       }
     } else {
