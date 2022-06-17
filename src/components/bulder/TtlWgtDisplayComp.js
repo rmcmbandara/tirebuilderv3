@@ -158,6 +158,13 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
   //-------------------------------------------------------------------------------------
   //Functions and Hanlers
   //************************************************************************************ */
+
+  function timeout(delay) {
+    return new Promise((res) => {
+      setTimeout(res, delay)
+      window.location.reload()
+    })
+  }
   const clickHandler = () => {
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
@@ -204,11 +211,11 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       edc1sttire,
     })
       .then((res1) => {
-        console.log(res1)
-        //Print Out-------------------------------------------------------------------------
-        var currentdate = new Date()
-        var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
-        const zpl = `^XA
+        if (res1.status == 200) {
+          //Print Out-------------------------------------------------------------------------
+          var currentdate = new Date()
+          var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
+          const zpl = `^XA
    ^FO${PRINT_X + 20},12
    ^AM,20,10
    ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
@@ -226,7 +233,25 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
    ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
    ^XZ
    `
-        printerHost.put(`/bc`, { zpl, bcprinter: 1 })
+          printerHost
+            .put(`/bc`, { zpl, bcprinter: 1 })
+            .then((res2) => {
+              console.log(res2.status)
+              if (res1.status == 200) {
+                console.log('asdfS')
+              } else {
+                notifyError(res1)
+              }
+              window.location.reload()
+            })
+            .catch((e) => {
+              notifyError('ප්‍රින්ටර් සර්වර් එකේ නෙට්වර්ක් ප්‍රශ්නයකි. ටයරය එන්ටර් වී ඇත')
+              notifyError(e.message + ' in printer server')
+              timeout(5000)
+            })
+        } else {
+          notifyError(res1)
+        }
       })
       .catch((e) => {
         if (e.message == 'Request failed with status code 409')
@@ -372,18 +397,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
             <></>
           )}
         </div>
-        {timeOutCountValue < counter && inRange ? (
-          <Button
-            className="btn btn-default fs-1 mx-auto "
-            style={{ minWidth: '300px', minHeight: '100px', marginRight: 0 }}
-            onClick={clickHandler}
-          >
-            ENTER
-          </Button>
-        ) : (
-          <></>
-        )}
-        <Button onClick={clickHandler}>Enter</Button>
       </Card.Body>
     </Card>
   )
