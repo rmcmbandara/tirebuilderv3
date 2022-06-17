@@ -14,6 +14,7 @@ const updateSpecAvl = (value) => (dispatch) => {
 }
 
 const updateSpecVerMach = (value) => (dispatch) => {
+  console.log(value)
   dispatch({ type: UPDATE_SPEC_VER_MATCH, payload: value })
 }
 
