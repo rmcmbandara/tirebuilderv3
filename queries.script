@@ -39,7 +39,7 @@ ALTER TABLE IF EXISTS mfg.builder_temp
 $$
 
 BEGIN
-IF NEW.edc1sttire=2 THEN
+IF NEW.edc1sttire=0 THEN
 		update srtspec.spec set edc1sttire=1 where specid = NEW.specid;
 END IF;
 
