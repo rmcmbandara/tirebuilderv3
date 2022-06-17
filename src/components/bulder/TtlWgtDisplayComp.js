@@ -179,7 +179,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     const stdbandwgt = bandWgts?.specBandWgt
     const actbandwgt = bandWgts?.actBandWgt
     const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
-    notifyError(edc1sttire)
     //Insert builder table
     SLTLDBConnection.post(`builder_temp/insertsn`, {
       sn,
@@ -205,6 +204,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       edc1sttire,
     })
       .then((res1) => {
+        console.log(res1)
         //Print Out-------------------------------------------------------------------------
         var currentdate = new Date()
         var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
