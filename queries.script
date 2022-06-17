@@ -3,9 +3,9 @@ CREATE TABLE mfg.builder_temp
     sn integer,
     tirecode integer,
     sver integer,
-    bvol integer,
-    cvol integer,
-    trvol integer,
+    bvol numeric,
+    cvol numeric,
+    trvol numeric,
     bsg numeric,
     csg numeric,
     trsg numeric,
@@ -40,7 +40,7 @@ $$
 
 BEGIN
 IF NEW.edc1sttire=2 THEN
-		update srtspec.spec set edc1sttire=9 where specid = NEW.specid;
+		update srtspec.spec set edc1sttire=1 where specid = NEW.specid;
 END IF;
 
 INSERT INTO mfg.builder(
@@ -83,7 +83,7 @@ INSERT INTO mfg.builder(
  NEW.actbandwgt,
  NEW.bandid);
  
-INSERT INTO stock.stk(sn,tc,pid) 
+INSERT INTO stock.stk(sn,tc,pid,qg) 
 VALUES(NEW.sn,NEW.tc,NEW.pid);
 
 
