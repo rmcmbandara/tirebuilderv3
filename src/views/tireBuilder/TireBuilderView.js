@@ -90,6 +90,24 @@ const TireBuilderView = () => {
   /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
   //Functions to show and hide next SN model
+  //Get Current Time and date for databse
+  const [dateTimedb, setDateTimedb] = useState('')
+  const getDateTimedb = () => {
+    //Get Current Date
+    var date = new Date().getDate()
+    //Get Current Month
+    var month = new Date().getMonth() + 1
+    //Get Current Year
+    var year = new Date().getFullYear()
+    //Get Current Time Hours
+    var hours = new Date().getHours()
+    //Get Current Time Minutes
+    var min = new Date().getMinutes()
+    //Get Current Time Seconds
+    var sec = new Date().getSeconds()
+    var finalObject = date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec
+    setDateTimedb(finalObject)
+  }
   const handleChangeSNButtonModel = (e) => {
     setShowSNChange(false)
     dispatch(setisChantedNxtSnTrue(true))
@@ -221,6 +239,7 @@ const TireBuilderView = () => {
     const timer = setInterval(async () => {
       //if manualy change Serial Number this triggering should not be not happened
       if (!isNxtSnChangeSetTrue) {
+        getDateTimedb()
         SLTLDBConnection.get(`builder/nextsn`).then((res) => {
           setNxtSN(res.data)
         })
