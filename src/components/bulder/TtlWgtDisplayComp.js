@@ -311,7 +311,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           )}
         </div>
       </Card.Body>
-      <Button onClick={clickHandler}>Enter</Button>
     </Card>
   )
 }
