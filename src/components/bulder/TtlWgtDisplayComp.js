@@ -166,6 +166,21 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     })
   }
   const clickHandler = () => {
+    var currentdate = new Date()
+    var datetime =
+      currentdate.getFullYear() +
+      '-' +
+      currentdate.getMonth() +
+      '-' +
+      currentdate.getDate() +
+      ' ' +
+      currentdate.getHours() +
+      ':' +
+      currentdate.getMinutes() +
+      ':' +
+      currentdate.getSeconds() +
+      '.00000'
+    var mfgdate = datetime
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
     const tc = tirecode //for stock.stk table
@@ -209,12 +224,11 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       tc,
       pid,
       edc1sttire,
+      mfgdate,
     })
       .then((res1) => {
         if (res1.status == 200) {
           //Print Out-------------------------------------------------------------------------
-          var currentdate = new Date()
-          var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
           const zpl = `^XA
    ^FO${PRINT_X + 20},12
    ^AM,20,10
@@ -260,107 +274,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       })
   }
   //----------------------------------------------------------
-  const clickHandler2 = () => {
-    const sn = nxtSN
-    const tirecode = tireCodeTxt.data?.slice(0, 5)
-    const tc = tirecode //for stock.stk table
-    const pid = tireCodeDetail?.data?.data?.data[0]?.pid
-    const sver = specDetail.data.data.spec.specversion
-    const bvol = specDetail.data.data.spec.bvol
-    const cvol = specDetail.data.data.spec.cvol
-    const trvol = specDetail.data.data.spec.trvol
-    const bonwgt = specDetail.data.data.spec.bonwgt
-    const actwgt = scaleReading
-    const bsg = specDetail.data.data.spec.bsg
-    const csg = specDetail.data.data.spec.csg
-    const trsg = specDetail.data.data.spec.trsg
-    const bcode = specDetail.data.data.spec.bcode
-    const ccode = specDetail.data.data.spec.ccode
-    const trcode = specDetail.data.data.spec.trcode
-    const specid = specDetail.data.data.spec.specid
-    const stdbandwgt = bandWgts?.specBandWgt
-    const actbandwgt = bandWgts?.actBandWgt
-    const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
-    //Insert builder table
-    SLTLDBConnection.post(`builder/newgt`, {
-      sn,
-      tirecode,
-      sver,
-      bvol,
-      cvol,
-      trvol,
-      bsg,
-      csg,
-      trsg,
-      bonwgt,
-      actwgt,
-      bcode,
-      ccode,
-      trcode,
-      specid,
-      stdbandwgt,
-      actbandwgt,
-      bandid,
-      tc,
-      pid,
-    })
-      .then((res1) => {
-        //Update Stcok Table---------------------------------------------------------
-        SLTLDBConnection.post(`stk/insert`, {
-          sn,
-          pid,
-          tc,
-        })
-          .then((res1) => {
-            //Print Out-------------------------------------------------------------------------
-            var currentdate = new Date()
-            var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
-            const zpl = `^XA
-        ^FO${PRINT_X + 20},12
-        ^AM,20,10
-        ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
-        ^FO${PRINT_X + 20},38
-        ^AM,20,10
-        ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
-        ^FO${PRINT_X + 20},65
-        ^AM,20,10
-        ^FD${brand} ${swmsg}^FS
-        ^FO${PRINT_X + 20},85
-        ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-        ^FO${PRINT_X + 20},105
-        ^AM,20,10^FD${nxtSN}^FS
-        ^FO${PRINT_X + 35},125
-        ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
-        ^XZ
-        `
-            printerHost
-              .put(`/bc`, { zpl, bcprinter: 1 })
-              .then((resPrint) => {
-                if (edc1stTire == 0) {
-                  SLTLDBConnection.put(`spec/edc1sttireset_1`, { edc1sttire: 1, specid })
-                    .then((resPrint) => {
-                      window.location.reload()
-                    })
-                    .catch((e) => {
-                      console.log(e.Error)
-                      notifyError(e)
-                    })
-                } else {
-                  window.location.reload()
-                }
-              })
-              .catch((e) => {
-                notifyError(e)
-              })
-          })
-          .catch((e) => {
-            notifyError(e)
-          })
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  }
   return (
     <Card className="text-center" style={{ minWidth: '600px' }}>
       <Card.Header>
@@ -398,6 +311,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           )}
         </div>
       </Card.Body>
+      <Button onClick={clickHandler}>Enter</Button>
     </Card>
   )
 }
