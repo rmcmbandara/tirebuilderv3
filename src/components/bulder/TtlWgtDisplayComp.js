@@ -171,7 +171,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       this.setTime(this.getTime() + h * 60 * 60 * 1000 + m * 60 * 1000)
       return this
     }
-    var currentdate = new Date().addHours(12, 30)
+    var currentdate = new Date()
     var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
 
     var mfgdate = datetime
