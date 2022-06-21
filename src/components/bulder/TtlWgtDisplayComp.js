@@ -172,19 +172,8 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       return this
     }
     var currentdate = new Date().addHours(12, 30)
-    var datetime =
-      currentdate.getFullYear() +
-      '-' +
-      currentdate.getMonth() +
-      '-' +
-      currentdate.getDate() +
-      ' ' +
-      currentdate.getHours() +
-      ':' +
-      currentdate.getMinutes() +
-      ':' +
-      currentdate.getSeconds() +
-      '.00000'
+    var datetime = currentdate.getHours() + ':' + currentdate.getMinutes()
+
     var mfgdate = datetime
     const sn = nxtSN
     const tirecode = tireCodeTxt.data?.slice(0, 5)
@@ -229,7 +218,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
       tc,
       pid,
       edc1sttire,
-      mfgdate,
     })
       .then((res1) => {
         if (res1.status == 200) {
@@ -316,7 +304,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           )}
         </div>
       </Card.Body>
-      {/* <Button onClick={clickHandler}>Ener</Button> */}
+      <Button onClick={clickHandler}>Ener</Button>
     </Card>
   )
 }
