@@ -166,7 +166,12 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     })
   }
   const clickHandler = () => {
-    var currentdate = new Date()
+    //This function is because server machine lags time of 12hr and 34 min
+    Date.prototype.addHours = function (h, m) {
+      this.setTime(this.getTime() + h * 60 * 60 * 1000 + m * 60 * 1000)
+      return this
+    }
+    var currentdate = new Date().addHours(12, 30)
     var datetime =
       currentdate.getFullYear() +
       '-' +
@@ -311,6 +316,7 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
           )}
         </div>
       </Card.Body>
+      <Button onClick={clickHandler}>Ener</Button>
     </Card>
   )
 }
