@@ -4,12 +4,7 @@ import { Badge, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../apis/SLTLDBConnection'
 import { notifyError, notifyErrorQk, notifySuccess } from 'src/utils/toastify'
-import { getPidDetail } from '../pidUpdate/httpRequests/pidDetailforPid'
-import { connect } from 'react-redux'
-import { incrementCountAction } from '../../actions'
-import { propTypes } from 'react-bootstrap/esm/Image'
 import TireCodeInputComp from 'src/components/bulder/TireCodeInputComp'
-import { getSpecDetailsList } from 'src/utils/specDetailCreator'
 import SpecDisplayComp from 'src/components/bulder/SpecDisplayComp'
 import TtlWgtDisplayComp from 'src/components/bulder/TtlWgtDisplayComp'
 //Redux---------------------------------
@@ -29,10 +24,7 @@ import { scaleReading } from '../../redux/scale/scaleActions'
 import { toggleSrtPob } from '../../redux/srtpob/srtpobActions'
 import { setTireCodeDetail } from 'src/redux/tireCodeDetail/tireCodeDetailsActions'
 //---------------------------------------
-import StabilitySetterComp from 'src/components/StabilitySetterComp'
-import BandWgtScanComp from 'src/components/bulder/BandWgtScanComp'
 import { getBandWgtTol } from 'src/utils/bandWgtTol'
-import CountDownTmer from 'src/components/bulder/CountDownTmer'
 
 import { PRINT_X, PRINT_Y } from 'src/utils/constants'
 import printerHost from 'src/apis/printerHost'
@@ -48,7 +40,6 @@ const TireBuilderView = () => {
   const [nxtSN, setNxtSN] = useState(0)
 
   //Show and hide tirecode input and band input
-  const [showBandInputComp, setShowBandInputComp] = useState(false)
   const [shwoCompWeingComponent, setShwoCompWeingComponent] = useState(false)
   //Disable editing tirecode input and band input
   const [disableInputTireCode, setDisableInputTireCode] = useState(false)
@@ -84,30 +75,12 @@ const TireBuilderView = () => {
   const dataAvlReducer = useSelector((state) => state.dataAvlReducer)
   const isNxtSnChangeSetTrue = useSelector((state) => state.nxtSnChangeSetTrueReducer)
   //Destructre redux states
-  const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
   const { tcAvl, specVerMatch, edc1stTire, specAvl } = dataAvlReducer
 
   /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
   //Functions to show and hide next SN model
   //Get Current Time and date for databse
-  const [dateTimedb, setDateTimedb] = useState('')
-  const getDateTimedb = () => {
-    //Get Current Date
-    var date = new Date().getDate()
-    //Get Current Month
-    var month = new Date().getMonth() + 1
-    //Get Current Year
-    var year = new Date().getFullYear()
-    //Get Current Time Hours
-    var hours = new Date().getHours()
-    //Get Current Time Minutes
-    var min = new Date().getMinutes()
-    //Get Current Time Seconds
-    var sec = new Date().getSeconds()
-    var finalObject = date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec
-    setDateTimedb(finalObject)
-  }
   const handleChangeSNButtonModel = (e) => {
     setShowSNChange(false)
     dispatch(setisChantedNxtSnTrue(true))
@@ -129,13 +102,6 @@ const TireBuilderView = () => {
   const handleShowSNChange = () => {
     setShowSNChange(true)
     setChangedNxtSN(nxtSN)
-  }
-  //Functions to show and hide Press Enter Modle
-  const handleClosePressEnter = () => setShowPressEnter(false)
-  const handleShowPressEnter = () => setShowPressEnter(true)
-
-  const showPressEnterRemotely = (val) => {
-    setShowPressEnter(val)
   }
   //This is passed to TireCodeInputComp.js
   const setTirecodeInputFun = (val) => {
@@ -178,14 +144,12 @@ const TireBuilderView = () => {
                     case 1: //SRTTire
                       console.log('Enterd SRT')
                       setShwoCompWeingComponent(true)
-                      setShowBandInputComp(false)
                       setDisableInputTireCode(true)
                       dispatch(toggleSrtPob(true))
                       return
                     case 2: //POB Tire
                       setDisableInputTireCode(true)
                       setShwoCompWeingComponent(true)
-                      setShowBandInputComp(true)
                       dispatch(toggleSrtPob(false))
                       return
                     default:
@@ -193,7 +157,6 @@ const TireBuilderView = () => {
                   }
                 }
                 //Show PressNo Enter model
-                showPressEnterRemotely(true)
               } else {
                 //Spec version is not OK
               }
@@ -207,14 +170,12 @@ const TireBuilderView = () => {
         notifyError(specDetail?.data?.data?.spec?.specversion.toString())
 
         //Hide PressNo Enter model
-        showPressEnterRemotely(false)
       }
     } else if (edc1stTire == 1) {
       //EDC 1st Tire
       refreshTireCodeInput()
       notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
       //Hide PressNo Enter model
-      showPressEnterRemotely(false)
     }
   }
 
@@ -238,7 +199,6 @@ const TireBuilderView = () => {
     const timer = setInterval(async () => {
       //if manualy change Serial Number this triggering should not be not happened
       if (!isNxtSnChangeSetTrue) {
-        getDateTimedb()
         SLTLDBConnection.get(`builder/nextsn`).then((res) => {
           setNxtSN(res.data)
         })
@@ -381,7 +341,6 @@ const TireBuilderView = () => {
       dispatch(setSpecBandWgt(0.0)) //Band Spec Wgt -->0kg
       setBandBarCodeInputFun('') //Set band barcode to ""
       dispatch(updateEdc1StTire(null))
-      setShowBandInputComp(false)
       dispatch(setSpecBandWgt(null))
     }
   }, [tireCodeTxt])
@@ -417,7 +376,6 @@ const TireBuilderView = () => {
           disableInputTireCode={disableInputTireCode}
           onBandBarcodeChange={setBandBarCodeInputFun}
           onTireCodeBarCodeChange={setTirecodeInputFun}
-          showPressEnterRemotely={showPressEnterRemotely}
         />
         <div className="mt-3">
           <Button className="text-center" variant="warning" onClick={handleClickRefresh}>
