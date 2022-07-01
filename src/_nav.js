@@ -28,6 +28,12 @@ const _navx = [
     to: '/pressstickerprint',
     icon: <CIcon icon={cibProductHunt} customClassName="nav-icon" />,
   },
+  {
+    component: CNavItem,
+    name: 'Cracker Mill',
+    to: '/crackerMill',
+    icon: <CIcon icon={cibProductHunt} customClassName="nav-icon" />,
+  },
 ]
 
 export default _navx

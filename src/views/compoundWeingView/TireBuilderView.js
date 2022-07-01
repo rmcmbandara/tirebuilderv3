@@ -49,7 +49,7 @@ const TireBuilderView = () => {
 
   //Show and hide tirecode input and band input
   const [showBandInputComp, setShowBandInputComp] = useState(false)
-  const [showTtlWgtComp, setShowTtlWgtComp] = useState(false)
+  const [shwoCompWeingComponent, setShwoCompWeingComponent] = useState(false)
   //Disable editing tirecode input and band input
   const [disableInputTireCode, setDisableInputTireCode] = useState(false)
   const [disableInputBand, setDisableInputBand] = useState(false)
@@ -177,17 +177,16 @@ const TireBuilderView = () => {
                   switch (res.data.rows[0].tcat) {
                     case 1: //SRTTire
                       console.log('Enterd SRT')
-                      setShowTtlWgtComp(true)
+                      setShwoCompWeingComponent(true)
                       setShowBandInputComp(false)
                       setDisableInputTireCode(true)
                       dispatch(toggleSrtPob(true))
                       return
                     case 2: //POB Tire
                       setDisableInputTireCode(true)
-                      setShowTtlWgtComp(false)
+                      setShwoCompWeingComponent(true)
                       setShowBandInputComp(true)
                       dispatch(toggleSrtPob(false))
-                      bandRef?.current.focus()
                       return
                     default:
                       return
@@ -352,14 +351,14 @@ const TireBuilderView = () => {
             bandRef.current.focus()
           } else {
             //Band Wgt is in the range therfore Show totla wgt component
-            setShowTtlWgtComp(true)
+            setShwoCompWeingComponent(true)
             setDisableInputTireCode(true)
             setDisableInputBand(true)
             dispatch(setActBandWgt(bandWgt_numeric))
           }
         }
       } else {
-        setShowTtlWgtComp(false) //Hide ttlWgt componeint
+        setShwoCompWeingComponent(false) //Hide ttlWgt componeint
         dispatch(setActBandWgt(0.0))
       }
     } else {
@@ -420,33 +419,18 @@ const TireBuilderView = () => {
           onTireCodeBarCodeChange={setTirecodeInputFun}
           showPressEnterRemotely={showPressEnterRemotely}
         />
-        <div className="m-3">
-          <Button variant="warning" onClick={handleClickRefresh}>
+        <div className="mt-3">
+          <Button className="text-center" variant="warning" onClick={handleClickRefresh}>
             Refresh
           </Button>
-          <h1>
-            <Badge bg="success">{pressNo}</Badge>
-          </h1>
-        </div>
-      </Col>
-      <Col sm={3}></Col>
-      <Col sm={3}>
-        {showTtlWgtComp && (
-          <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-            <TtlWgtDisplayComp
-              bandwgt_for_calculation={bandwgt_for_calculation}
-              nxtSN={!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}
-            />
-          </div>
-        )}
-        <div className="col text-center mt-5">
-          <h1>
+          <hr></hr>
+          <h1 className="mt-2">
             <Badge bg="info">{!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}</Badge>
           </h1>
           <h1>
             <Badge bg="info">{isSnAvlinStockTbl ? 'මෙම SMය පෙර භාවිත කර ඇත' : ''}</Badge>
           </h1>
-          <div className="col text-center mt-5">
+          <div className="col text-center mt-2">
             <Button variant="secondary" onClick={handleShowSNChange}>
               Change SN
             </Button>
@@ -456,6 +440,18 @@ const TireBuilderView = () => {
           </div>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
         </div>
+      </Col>
+      <Col sm={1}></Col>
+      <Col sm={3}>
+        {shwoCompWeingComponent && (
+          <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
+            <TtlWgtDisplayComp
+              bandwgt_for_calculation={bandwgt_for_calculation}
+              nxtSN={!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}
+            />
+          </div>
+        )}
+        <div className="col text-center mt-5"></div>
       </Col>
       {/* Model for SN Change */}
       <Modal show={showSNChange} onHide={handleCloseSNChange} backdrop="static">
@@ -483,24 +479,6 @@ const TireBuilderView = () => {
       {/* 
       --------------Model 2
       */}
-      <Modal show={showPressEnter} onHide={handleClosePressEnter} backdrop="static">
-        <Modal.Header>
-          <Modal.Title>ප්‍රෙස් නොම්බරය</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3 fs-1" controlId="exampleForm.ControlInput1">
-              <Form.Control
-                className="mb-3 fs-1"
-                type="text"
-                autoFocus
-                value={pressNo}
-                onChange={(e) => handlePressNoEnter(e)}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-      </Modal>
     </Row>
   )
 }
