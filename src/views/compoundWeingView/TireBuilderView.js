@@ -28,6 +28,7 @@ import { getBandWgtTol } from 'src/utils/bandWgtTol'
 
 import { PRINT_X, PRINT_Y } from 'src/utils/constants'
 import printerHost from 'src/apis/printerHost'
+import EnterComp from 'src/components/crackreMill/EnterComp'
 const TireBuilderView = () => {
   //States and Refs-----------------------------
   //Inputs for tireCode and BandBarcode
@@ -399,14 +400,11 @@ const TireBuilderView = () => {
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
         </div>
       </Col>
-      <Col sm={1}></Col>
+      <Col sm={1}>{shwoCompWeingComponent ? 't' : 'f'}</Col>
       <Col sm={3}>
         {shwoCompWeingComponent && (
           <div className="mx-auto" style={{ marginTop: '50px', marginRight: 0 }}>
-            <TtlWgtDisplayComp
-              bandwgt_for_calculation={bandwgt_for_calculation}
-              nxtSN={!isNxtSnChangeSetTrue ? nxtSN : changedNxtSN}
-            />
+            <EnterComp />
           </div>
         )}
         <div className="col text-center mt-5"></div>
