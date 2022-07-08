@@ -245,11 +245,10 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
             .then((res2) => {
               console.log(res2.status)
               if (res1.status == 200) {
-                console.log('asdfS')
+                window.location.reload()
               } else {
                 notifyError(res1)
               }
-              window.location.reload()
             })
             .catch((e) => {
               notifyError('ප්‍රින්ටර් සර්වර් එකේ නෙට්වර්ක් ප්‍රශ්නයකි. ටයරය එන්ටර් වී ඇත')

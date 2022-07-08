@@ -100,3 +100,41 @@ CREATE TRIGGER trgger_insert_mfg_builder
   EXECUTE PROCEDURE mfg.insert_mfg_builder();
   
   
+
+  ----------------------------------------------------------------------------
+  
+ CREATE OR REPLACE FUNCTION mfg.delete_mfg_builder_temp()
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS
+$$
+DECLARE 
+ sn_requested INTEGER := OLD.sn;
+ selected_sn INTEGER;
+BEGIN  
+		SELECT * FROM mfg.builder 
+		 INTO selected_sn
+		WHERE sn = sn_requested;
+			IF FOUND THEN
+				DELETE FROM mfg.builder where sn = sn_requested; 
+			END IF;
+			
+		SELECT * FROM stock.stk 
+		INTO selected_sn
+		WHERE sn = sn_requested;
+			IF FOUND THEN
+				DELETE FROM stock.stk where sn = sn_requested; 
+			END IF;
+	RETURN OLD;
+END;
+$$
+
+
+-----
+CREATE TRIGGER trgger_delete_mfg_builder_temp
+  BEFORE DELETE
+  ON mfg.builder_temp
+  FOR EACH ROW
+  EXECUTE PROCEDURE mfg.delete_mfg_builder_temp();
+
+
