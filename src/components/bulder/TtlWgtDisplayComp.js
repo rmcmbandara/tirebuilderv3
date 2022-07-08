@@ -223,35 +223,40 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
         if (res1.status == 200) {
           //Print Out-------------------------------------------------------------------------
           const zpl = `^XA
-   ^FO${PRINT_X + 20},12
-   ^AM,20,10
-   ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
-   ^FO${PRINT_X + 20},38
-   ^AM,20,10
-   ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
-   ^FO${PRINT_X + 20},65
-   ^AM,20,10
-   ^FD${brand} ${swmsg}^FS
-   ^FO${PRINT_X + 20},85
-   ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-   ^FO${PRINT_X + 20},105
-   ^AM,20,10^FD${nxtSN}^FS
-   ^FO${PRINT_X + 35},125
-   ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
-   ^XZ
+            ^FO${PRINT_X + 20},12
+            ^AM,20,10
+            ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
+            ^FO${PRINT_X + 20},38
+            ^AM,20,10
+            ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
+            ^FO${PRINT_X + 20},65
+            ^AM,20,10
+            ^FD${brand} ${swmsg}^FS
+            ^FO${PRINT_X + 20},85
+            ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
+            ^FO${PRINT_X + 20},105
+            ^AM,20,10^FD${nxtSN}^FS
+            ^FO${PRINT_X + 35},125
+            ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
+            ^XZ
    `
           printerHost
             .put(`/bc`, { zpl, bcprinter: 1 })
             .then((res2) => {
-              console.log(res2.status)
-              if (res1.status == 200) {
+              if (res2.status == 200) {
                 window.location.reload()
               } else {
-                notifyError(res1)
+                SLTLDBConnection.delete(`builder_temp/deletesn`, { sn })
+                  .then((resdel) => {
+                    notifyError('Deleted in builder_temp')
+                  })
+                  .catch((e) => {
+                    notifyError(e.message)
+                  })
               }
             })
             .catch((e) => {
-              notifyError('ප්‍රින්ටර් සර්වර් එකේ නෙට්වර්ක් ප්‍රශ්නයකි. ටයරය එන්ටර් වී ඇත')
+              notifyError('ප්‍රින්ටර් සර්වර් එකේ නෙට්වර්ක් ප්‍රශ්නයකි. ටයරය එන්ටර් වී ඇත ක්')
               notifyError(e.message + ' in printer server')
               timeout(5000)
             })

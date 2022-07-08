@@ -3,8 +3,6 @@ import { propTypes } from 'react-bootstrap/esm/Image'
 import { useSelector } from 'react-redux'
 
 const EnterComp = () => {
-
-
   //useEffects
   //UseEffect for scale reading detection
 
