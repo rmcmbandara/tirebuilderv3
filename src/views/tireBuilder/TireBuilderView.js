@@ -472,10 +472,10 @@ const TireBuilderView = () => {
               Change SN
             </Button>
             <Button className="m-3" variant="danger" onClick={bandSticker}>
-              Band Sticker
+              බෑන්ඩ් බර ස්ටිකරය
             </Button>
             <Button className="m-3" variant="danger" onClick={reprint}>
-              Band Stickser
+              පෙර ස්ටිකරය
             </Button>
           </div>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
