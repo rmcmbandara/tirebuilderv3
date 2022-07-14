@@ -407,7 +407,7 @@ const TireBuilderView = () => {
     const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
   }
   const reprint = () => {
-    const prevSn = nxtSN-1
+    const prevSn = nxtSN - 1
     SLTLDBConnection.get(`builder_temp/getrow/${prevSn}`)
       .then((res) => {
         if (res.data.data.data[0].zpl) {
