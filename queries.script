@@ -132,7 +132,7 @@ $$
 
 -----
 CREATE TRIGGER trgger_delete_mfg_builder_temp
-  BEFORE DELETE
+  AFTER DELETE
   ON mfg.builder_temp
   FOR EACH ROW
   EXECUTE PROCEDURE mfg.delete_mfg_builder_temp();
