@@ -166,24 +166,6 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     })
   }
   const clickHandler = () => {
-    const zpl = `^XA
-    ^FO${PRINT_X + 20},12
-    ^AM,20,10
-    ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
-    ^FO${PRINT_X + 20},38
-    ^AM,20,10
-    ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
-    ^FO${PRINT_X + 20},65
-    ^AM,20,10
-    ^FD${brand} ${swmsg}^FS
-    ^FO${PRINT_X + 20},85
-    ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
-    ^FO${PRINT_X + 20},105
-    ^AM,20,10^FD${nxtSN}^FS
-    ^FO${PRINT_X + 35},125
-    ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
-    ^XZ
-`
     //This function is because server machine lags time of 12hr and 34 min
     Date.prototype.addHours = function (h, m) {
       this.setTime(this.getTime() + h * 60 * 60 * 1000 + m * 60 * 1000)
@@ -213,6 +195,25 @@ const TtlWgtDisplayComp = ({ bandwgt_for_calculation, nxtSN }) => {
     const stdbandwgt = bandWgts?.specBandWgt
     const actbandwgt = bandWgts?.actBandWgt
     const bandid = tireCodeDetail?.data?.data?.data[0]?.bandid
+
+    const zpl = `^XA
+    ^FO${PRINT_X + 20},12
+    ^AM,20,10
+    ^FD${tiresizebasic} ${config} ${lugtypecap}^FS
+    ^FO${PRINT_X + 20},38
+    ^AM,20,10
+    ^FDMNO-${moldno} ${!isSrt ? actBandWgt : ''}//${tiretypecap} ${rimsize}^FS
+    ^FO${PRINT_X + 20},65
+    ^AM,20,10
+    ^FD${brand} ${swmsg}^FS
+    ^FO${PRINT_X + 20},85
+    ^AM,20,10^FD${parseFloat(scaleReading)}   ${datetime}^FS
+    ^FO${PRINT_X + 20},105
+    ^AM,20,10^FD${nxtSN}^FS
+    ^FO${PRINT_X + 35},125
+    ^BY1 ^BCN,60,Y,N,S^FD ${nxtSN}
+    ^XZ
+`
     //Insert builder table
     SLTLDBConnection.post(`builder_temp/insertsn`, {
       sn,
