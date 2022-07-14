@@ -406,6 +406,18 @@ const TireBuilderView = () => {
     //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
     const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
   }
+  const reprint = () => {
+    SLTLDBConnection.get(`builder_temp/getrow/220702918`)
+      .then((res) => {
+        if (res.data.data.data[0].zpl) {
+          const zpl = res.data.data.data[0].zpl
+          printerHost.put(`/bc`, { zpl, bcprinter: 1 })
+        } else {
+          notifyError('Network problem')
+        }
+      })
+      .catch((e) => console.log(e.message))
+  }
   return (
     <Row>
       <Col sm={3}>
@@ -460,6 +472,9 @@ const TireBuilderView = () => {
             </Button>
             <Button className="m-3" variant="danger" onClick={bandSticker}>
               Band Sticker
+            </Button>
+            <Button className="m-3" variant="danger" onClick={reprint}>
+              Band Stickser
             </Button>
           </div>
           {isNxtSnChangeSetTrue ? <Badge bg="danger">SN Changed</Badge> : ''}
