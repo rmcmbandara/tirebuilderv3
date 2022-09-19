@@ -138,3 +138,8 @@ CREATE TRIGGER trgger_delete_mfg_builder_temp
   EXECUTE PROCEDURE mfg.delete_mfg_builder_temp();
 
 
+
+//---BOMUpdateion--------------------------
+
+ALTER TABLE mfg.builder ADD beadwgt numeric(9, 5) NULL DEFAULT 0;
+ALTER TABLE mfg.builder ADD lipwgt numeric(9, 5) NULL DEFAULT 0;

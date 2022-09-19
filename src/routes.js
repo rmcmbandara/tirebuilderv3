@@ -2,6 +2,7 @@ import React from 'react'
 import BandSticerPrintView from './views/bandSticker/BandSticerPrintView'
 import PressStickerPrintView from './views/pressStikerPrint/PressStickerPrintView'
 import CompoundWeighingView from './views/compoundWeingView/TireBuilderView'
+import OrderUpdateView from './views/orderUpdate/OrderUpdateView'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 //TireBuilder
@@ -18,6 +19,7 @@ const routes = [
   { path: '/bandprint', name: 'BandPrint', component: BandSticerPrintView },
   { path: '/pressstickerprint', name: 'PressStickerPrint', component: PressStickerPrintView },
   { path: '/crackerMill', name: 'crackerMill', component: CompoundWeighingView },
+  { path: '/orderupdate', name: 'crackerMill', component: OrderUpdateView },
 ]
 
 export default routes

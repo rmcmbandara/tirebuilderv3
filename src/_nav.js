@@ -30,9 +30,9 @@ const _navx = [
   },
   {
     component: CNavItem,
-    name: 'Cracker Mill',
-    to: '/crackerMill',
-    icon: <CIcon icon={cibProductHunt} customClassName="nav-icon" />,
+    name: 'Order Upload',
+    to: '/orderupdate',
+    icon: <CIcon icon={cilLibraryAdd} customClassName="nav-icon" />,
   },
 ]
 
