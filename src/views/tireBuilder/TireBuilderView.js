@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { Badge, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import SLTLDBConnection from '../../../src/apis/SLTLDBConnection'
-import { notifyError, notifyErrorQk, notifySuccess } from 'src/utils/toastify'
+import { notifyError, notifyErrorQk, notifySuccess, notifySuccessQk } from 'src/utils/toastify'
 import { getPidDetail } from '../pidUpdate/httpRequests/pidDetailforPid'
 import { connect } from 'react-redux'
 import { incrementCountAction } from '../../actions'
@@ -87,6 +87,7 @@ const TireBuilderView = () => {
   const { settingWgt, stable, toleranceWgt, ignoreSettingWgt, stableAbsolute } = stabilityDetail
   const { tcAvl, specVerMatch, edc1stTire, specAvl } = dataAvlReducer
 
+  var balancetoMfgQty
   /////////////////////////////////////////////////////////////
   //Handlers and Methods-------------------------
   //Functions to show and hide next SN model
@@ -163,62 +164,88 @@ const TireBuilderView = () => {
   }
 
   const visibilityAndEditebilitySetter = () => {
-    console.log('Enterd1')
-    console.log('Edc1st Tire ' + edc1stTire)
-    if (edc1stTire == 0 || edc1stTire == 2) {
-      if (specVerMatch) {
-        if (specAvl) {
-          //Spec not avialble is not a possible case since cards can not be printed
-          SLTLDBConnection.get(`sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`).then(
-            (res) => {
-              if (specVerMatch) {
-                //SpecVersion is OK
-                if (res.data && res.data.rows[0]) {
-                  switch (res.data.rows[0].tcat) {
-                    case 1: //SRTTire
-                      console.log('Enterd SRT')
-                      setShowTtlWgtComp(true)
-                      setShowBandInputComp(false)
-                      setDisableInputTireCode(true)
-                      dispatch(toggleSrtPob(true))
-                      return
-                    case 2: //POB Tire
-                      setDisableInputTireCode(true)
-                      setShowTtlWgtComp(false)
-                      setShowBandInputComp(true)
-                      dispatch(toggleSrtPob(false))
-                      bandRef?.current.focus()
-                      return
-                    default:
-                      return
-                  }
-                }
-                //Show PressNo Enter model
-                showPressEnterRemotely(true)
-              } else {
-                //Spec version is not OK
-              }
-            },
-          )
+    var avlinStkNos
+    var orderSummeryNos
+    var pidAvlInOrderSummeryTbl = false
+    //Get PID
+    const pid = tireCodeDetail.data?.data.data[0].pid
+    //Get avl tires in stock table
+    SLTLDBConnection.get(`stk/getavltires/${pid}`).then((res) => {
+      avlinStkNos = res.data.data.rows[0].count
+      //Get order summery detail
+      SLTLDBConnection.get(`/ordersummery/ordersummeryofpid/${pid}`).then((res) => {
+        orderSummeryNos = res.data[0]?.nos
+        if (res.data?.length > 0) {
+          pidAvlInOrderSummeryTbl = true
         }
-      } else {
-        //Spec version does not match
-        refreshTireCodeInput()
-        notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
-        notifyError(specDetail?.data?.data?.spec?.specversion.toString())
+        balancetoMfgQty = orderSummeryNos - avlinStkNos
+        if (balancetoMfgQty > 0) {
+          notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාඪනය කිරීමට ඇත`)
+          //Work order verification
+          if (pidAvlInOrderSummeryTbl) {
+            if (edc1stTire == 0 || edc1stTire == 2) {
+              if (specVerMatch) {
+                if (specAvl) {
+                  //Spec not avialble is not a possible case since cards can not be printed
+                  SLTLDBConnection.get(
+                    `sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`,
+                  ).then((res) => {
+                    if (specVerMatch) {
+                      //SpecVersion is OK
+                      if (res.data && res.data.rows[0]) {
+                        switch (res.data.rows[0].tcat) {
+                          case 1: //SRTTire
+                            setShowTtlWgtComp(true)
+                            setShowBandInputComp(false)
+                            setDisableInputTireCode(true)
+                            dispatch(toggleSrtPob(true))
+                            return
+                          case 2: //POB Tire
+                            setDisableInputTireCode(true)
+                            setShowTtlWgtComp(false)
+                            setShowBandInputComp(true)
+                            dispatch(toggleSrtPob(false))
+                            bandRef?.current.focus()
+                            return
+                          default:
+                            return
+                        }
+                      }
+                      //Show PressNo Enter model
+                      showPressEnterRemotely(true)
+                    } else {
+                      //Spec version is not OK
+                    }
+                  })
+                }
+              } else {
+                //Spec version does not match
+                refreshTireCodeInput()
+                notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
+                notifyError(specDetail?.data?.data?.spec?.specversion.toString())
 
-        //Hide PressNo Enter model
-        showPressEnterRemotely(false)
-      }
-    } else if (edc1stTire == 1) {
-      //EDC 1st Tire
-      refreshTireCodeInput()
-      notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
-      //Hide PressNo Enter model
-      showPressEnterRemotely(false)
-    }
+                //Hide PressNo Enter model
+                showPressEnterRemotely(false)
+              }
+            } else if (edc1stTire == 1) {
+              //EDC 1st Tire
+              refreshTireCodeInput()
+              notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
+              //Hide PressNo Enter model
+              showPressEnterRemotely(false)
+            }
+          } else {
+            refreshTireCodeInput()
+            notifyError(`"Work order " එක ට ${pid}ඇතුලත් කරන්න`)
+          }
+        } else {
+          refreshTireCodeInput()
+          notifyError(`මෙම POD  එකෙන් ටයර් නිශ්පාඪනය සම්පූර්න වී ඇත.`)
+        }
+      })
+    })
   }
-
+  //10011103
   //--------------------------ada---------------------------------------------------
   //UseEffects-------------------------
 
@@ -307,7 +334,6 @@ const TireBuilderView = () => {
       dispatch(updateEdc1StTire(edc1stTirefrmDB))
       //Send specVerMach info to perent base on Spec Avilability
       if (specVerInput === specVerDB) {
-        console.log('Spec Ver Matched')
         dispatch(updateSpecVerMach(true))
       } else {
         notifyError('පැරණි කාඩ් එකකි.')
@@ -437,9 +463,6 @@ const TireBuilderView = () => {
           <Button variant="warning" onClick={handleClickRefresh}>
             Refresh
           </Button>
-          <h1>
-            <Badge bg="success">{pressNo}</Badge>
-          </h1>
         </div>
         {showBandInputComp && (
           <BandWgtScanComp
