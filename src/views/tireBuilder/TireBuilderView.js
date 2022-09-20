@@ -180,7 +180,7 @@ const TireBuilderView = () => {
         }
         balancetoMfgQty = orderSummeryNos - avlinStkNos
         if (balancetoMfgQty > 0) {
-          notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාඪනය කිරීමට ඇත`)
+          notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාදනය කිරීමට ඇත`)
           //Work order verification
           if (pidAvlInOrderSummeryTbl) {
             if (edc1stTire == 0 || edc1stTire == 2) {
