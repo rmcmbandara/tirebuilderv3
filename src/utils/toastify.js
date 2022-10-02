@@ -6,7 +6,7 @@ toast.configure()
 const notifySuccess = (msg) => {
   toast.success(msg, {
     position: toast.POSITION.TOP_LEFT,
-    autoClose: 12000,
+    autoClose: 2000,
   })
 }
 

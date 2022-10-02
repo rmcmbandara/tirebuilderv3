@@ -12,33 +12,19 @@ import { notifyError } from 'src/utils/toastify'
 import { pressNoArr } from 'src/utils/pressNos'
 const PressStickerPrintView = () => {
   //UseStates
-  const [value, setValue] = useState('p-')
+  const [value, setValue] = useState('200102222')
   const dispatch = useDispatch()
-  //Scale Reading------------------------------------------------------------------
-  const scale = useSelector((state) => state.scaleData)
-  var { reading } = scale
-  //Fetch from localhost:4000/sc  and store in redux store with timer
-  useEffect(() => {
-    //Initialize
-    const sto = { reading: 0, time: Date.now() }
-    localStorage.setItem('cr', JSON.stringify(sto))
-    const timer = setInterval(async () => {
-      //codes are executed every 200ms
-      dispatch(scaleReading())
-    }, 200)
-    return () => {
-      clearInterval(timer)
-    }
-  }, [])
-  const x = async () => {
-    const xy = pressNoArr
+  const [data, setData] = useState()
 
+  const printSticker = async () => {
+    if (value.length == 9) {
+      console.log(value)
+    }
     const lowerCaseInclude = pressNoArr.includes(value.toLowerCase())
     const upperCaseInclude = pressNoArr.includes(value.toUpperCase())
     if (lowerCaseInclude || upperCaseInclude) {
       // Print the barcode
       let zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY2 ^BCN,120,Y,N,S^FDS${value}L^XZ`
-      //zpl = `^XA^FO${PRINT_X + 60},${PRINT_Y - 1}^BY1 ^BCN,120,Y,N,S^FDS3.37L^XZ`
       const updateBarCode = await printerHost.put(`/bc`, { zpl, bcprinter: 1 })
       //Error in server
       if (updateBarCode.data.error) {
@@ -54,6 +40,22 @@ const PressStickerPrintView = () => {
     }
   }
 
+  const printSticker2 = () => {
+    SLTLDBConnection.get(`stk/getallpiddetail/${value}`)
+      .then((res) => {
+        if (res.data.data.rowCount != 0) {
+          console.log(res?.data?.data.rows[0])
+        } else {
+          console.log('SN Not avl')
+        }
+      })
+      .catch((e) => console.log(e.message))
+  }
+  useEffect(() => {
+    if (value.length == 9) {
+      printSticker2()
+    }
+  }, [value.length])
   return (
     <>
       <Row>
@@ -61,14 +63,12 @@ const PressStickerPrintView = () => {
         <InputGroup className="mb-3">
           <FormControl
             className="fs-1"
-            placeholder="ප්‍රෙස්ස් නොම්බරය ටයිප් කරන්න"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            maxLength="5"
+            maxLength="9"
           />
         </InputGroup>
-        <Button onClick={x}>Get PrintOut</Button>
       </Row>
     </>
   )
