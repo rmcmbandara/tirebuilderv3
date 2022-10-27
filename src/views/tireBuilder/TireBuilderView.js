@@ -162,7 +162,7 @@ const TireBuilderView = () => {
   const handlePressNoEnter = (e) => {
     setPressNo(e.target.value)
   }
-
+  // prettier-ignore
   const visibilityAndEditebilitySetter = () => {
     var avlinStkNos
     var orderSummeryNos
@@ -175,14 +175,7 @@ const TireBuilderView = () => {
       //Get order summery detail
       SLTLDBConnection.get(`/ordersummery/ordersummeryofpid/${pid}`).then((res) => {
         orderSummeryNos = res.data[0]?.nos
-        if (res.data?.length > 0) {
-          pidAvlInOrderSummeryTbl = true
-        }
-        balancetoMfgQty = orderSummeryNos - avlinStkNos
-        if (balancetoMfgQty > 0) {
-        //  notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාදනය කිරීමට ඇත`)
           //Work order verification
-          if (pidAvlInOrderSummeryTbl) {
             if (edc1stTire == 0 || edc1stTire == 2) {
               if (specVerMatch) {
                 if (specAvl) {
@@ -234,14 +227,8 @@ const TireBuilderView = () => {
               //Hide PressNo Enter model
               showPressEnterRemotely(false)
             }
-          } else {
-            refreshTireCodeInput()
-            notifyError(`"Work order " එක ට ${pid}ඇතුලත් කරන්න`)
-          }
-        } else {
-          refreshTireCodeInput()
-          notifyError(`මෙම POD  එකෙන් ටයර් නිශ්පාඪනය සම්පූර්න වී ඇත.`)
-        }
+   
+  
       })
     })
   }
