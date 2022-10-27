@@ -109,7 +109,6 @@ const TireBuilderView = () => {
     var finalObject = date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec
     setDateTimedb(finalObject)
   }
-  // prettier-ignore
   const handleChangeSNButtonModel = (e) => {
     setShowSNChange(false)
     dispatch(setisChantedNxtSnTrue(true))
@@ -163,7 +162,7 @@ const TireBuilderView = () => {
   const handlePressNoEnter = (e) => {
     setPressNo(e.target.value)
   }
-  // prettier-ignore
+
   const visibilityAndEditebilitySetter = () => {
     var avlinStkNos
     var orderSummeryNos
@@ -173,64 +172,77 @@ const TireBuilderView = () => {
     //Get avl tires in stock table
     SLTLDBConnection.get(`stk/getavltires/${pid}`).then((res) => {
       avlinStkNos = res.data.data.rows[0].count
-
-      orderSummeryNos = res.data[0]?.nos
-      notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාදනය කිරීමට ඇත`)
-      //Work order verification
-      if (edc1stTire == 0 || edc1stTire == 2) {
-        if (specVerMatch) {
-          if (specAvl) {
-            //Spec not avialble is not a possible case since cards can not be printed
-            SLTLDBConnection.get(
-              `sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`,
-            ).then((res) => {
+      //Get order summery detail
+      SLTLDBConnection.get(`/ordersummery/ordersummeryofpid/${pid}`).then((res) => {
+        orderSummeryNos = res.data[0]?.nos
+        if (res.data?.length > 0) {
+          pidAvlInOrderSummeryTbl = true
+        }
+        balancetoMfgQty = orderSummeryNos - avlinStkNos
+        if (balancetoMfgQty > 0) {
+        //  notifySuccess(`තවත් ටයර් ${balancetoMfgQty} නිශ්පාදනය කිරීමට ඇත`)
+          //Work order verification
+          if (pidAvlInOrderSummeryTbl) {
+            if (edc1stTire == 0 || edc1stTire == 2) {
               if (specVerMatch) {
-                //SpecVersion is OK
-                if (res.data && res.data.rows[0]) {
-                  switch (res.data.rows[0].tcat) {
-                    case 1: //SRTTire
-                      setShowTtlWgtComp(true)
-                      setShowBandInputComp(false)
-                      setDisableInputTireCode(true)
-                      dispatch(toggleSrtPob(true))
-                      return
-                    case 2: //POB Tire
-                      setDisableInputTireCode(true)
-                      setShowTtlWgtComp(false)
-                      setShowBandInputComp(true)
-                      dispatch(toggleSrtPob(false))
-                      bandRef?.current.focus()
-                      return
-                    default:
-                      return
-                  }
+                if (specAvl) {
+                  //Spec not avialble is not a possible case since cards can not be printed
+                  SLTLDBConnection.get(
+                    `sizebasic/gettcatbytirecode/${tireCodeInput.slice(0, 5)}`,
+                  ).then((res) => {
+                    if (specVerMatch) {
+                      //SpecVersion is OK
+                      if (res.data && res.data.rows[0]) {
+                        switch (res.data.rows[0].tcat) {
+                          case 1: //SRTTire
+                            setShowTtlWgtComp(true)
+                            setShowBandInputComp(false)
+                            setDisableInputTireCode(true)
+                            dispatch(toggleSrtPob(true))
+                            return
+                          case 2: //POB Tire
+                            setDisableInputTireCode(true)
+                            setShowTtlWgtComp(false)
+                            setShowBandInputComp(true)
+                            dispatch(toggleSrtPob(false))
+                            bandRef?.current.focus()
+                            return
+                          default:
+                            return
+                        }
+                      }
+                      //Show PressNo Enter model
+                      showPressEnterRemotely(true)
+                    } else {
+                      //Spec version is not OK
+                    }
+                  })
                 }
-                //Show PressNo Enter model
-                showPressEnterRemotely(true)
               } else {
-                //Spec version is not OK
+                //Spec version does not match
+                refreshTireCodeInput()
+                notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
+                notifyError(specDetail?.data?.data?.spec?.specversion.toString())
+
+                //Hide PressNo Enter model
+                showPressEnterRemotely(false)
               }
-            })
+            } else if (edc1stTire == 1) {
+              //EDC 1st Tire
+              refreshTireCodeInput()
+              notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
+              //Hide PressNo Enter model
+              showPressEnterRemotely(false)
+            }
+          } else {
+            refreshTireCodeInput()
+            notifyError(`"Work order " එක ට ${pid}ඇතුලත් කරන්න`)
           }
         } else {
-          //Spec version does not match
           refreshTireCodeInput()
-          notifyError('පැරණි කාඩ්පතකි. අලුත් කාඩ්පතක් ගන්න ')
-          notifyError(specDetail?.data?.data?.spec?.specversion.toString())
-
-          //Hide PressNo Enter model
-          showPressEnterRemotely(false)
+          notifyError(`මෙම POD  එකෙන් ටයර් නිශ්පාඪනය සම්පූර්න වී ඇත.`)
         }
-      } else if (edc1stTire == 1) {
-        //EDC 1st Tire
-        refreshTireCodeInput()
-        notifyError('"EDC 1st Tire" ටයර් නිශ්පාධනය කල නොහැක')
-        //Hide PressNo Enter model
-        showPressEnterRemotely(false)
-      }
-
-
-
+      })
     })
   }
   //10011103
