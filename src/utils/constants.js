@@ -6,5 +6,5 @@ export const DIFFERENCE_LARGE_TIRES = 5
 export const STABILITY_WAITING = 3
 export const TIMER_INTERVAL = 100
 
-export const PRINT_X = 250
+export const PRINT_X = 140
 export const PRINT_Y = 10
