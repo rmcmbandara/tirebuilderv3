@@ -258,7 +258,7 @@ const TireBuilderView = () => {
           setNxtSN(res.data)
         })
       }
-    }, 200)
+    }, 20000)
     return () => {
       clearInterval(timer)
     }
